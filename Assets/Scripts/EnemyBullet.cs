@@ -6,6 +6,8 @@ public class EnemyBullet : MonoBehaviour
     public float lifetime = 5f;
 
     private float direction = 1f;
+    private Rigidbody2D body;
+    private bool hasHit = false;
 
     public void SetDirection(float newDirection)
     {
@@ -14,28 +16,44 @@ public class EnemyBullet : MonoBehaviour
 
     void Start()
     {
+        body = GetComponent<Rigidbody2D>();
+
         Destroy(gameObject, lifetime);
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        transform.Translate(
-            Vector2.right *
-            direction *
-            speed *
-            Time.deltaTime
-        );
+        if (body != null)
+        {
+            body.linearVelocity = new Vector2(
+                direction * speed,
+                0f
+            );
+        }
     }
 
-    private void OnCollisionEnter2D(
-        Collision2D collision
+    // The bullet collider is a trigger, so it flies through
+    // other enemies and bullets instead of pushing them
+    private void OnTriggerEnter2D(
+        Collider2D other
     )
     {
+        if (hasHit)
+            return;
+
+        // Ignore other bullets / trigger zones and enemies
+        if (other.isTrigger || other.CompareTag("Enemy"))
+            return;
+
+        hasHit = true;
+
+        Effects.Impact(transform.position);
+
         // Hit player
-        if (collision.gameObject.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
             GameOverManager gameOverManager =
-                FindFirstObjectByType<GameOverManager>();
+                FindAnyObjectByType<GameOverManager>();
 
             if (gameOverManager != null)
             {

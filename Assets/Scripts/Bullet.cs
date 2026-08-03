@@ -6,12 +6,13 @@ public class Bullet : MonoBehaviour
     public int damage = 1;
     public float lifetime = 3f;
 
-    private float direction = 1f;
+    private Vector2 direction = Vector2.right;
     private Rigidbody2D body;
+    private bool hasHit = false;
 
-    public void SetDirection(float newDirection)
+    public void SetDirection(Vector2 newDirection)
     {
-        direction = newDirection;
+        direction = newDirection.normalized;
     }
 
     void Start()
@@ -25,29 +26,34 @@ public class Bullet : MonoBehaviour
     {
         if (body != null)
         {
-            body.linearVelocity = new Vector2(
-                direction * speed,
-                0f
-            );
+            body.linearVelocity = direction * speed;
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    // The bullet collider is a trigger, so it never pushes
+    // enemies around and bullets fly through each other
+    private void OnTriggerEnter2D(Collider2D other)
     {
+        // Only hit once, even if we overlap two things this step
+        if (hasHit)
+            return;
+
+        // Ignore other bullets / trigger zones and the player
+        if (other.isTrigger || other.CompareTag("Player"))
+            return;
+
+        hasHit = true;
+
+        Effects.Impact(transform.position);
+
         Debug.Log(
             "Player bullet hit: " +
-            collision.gameObject.name
+            other.gameObject.name
         );
 
         // Level 2 enemy
         Level2Enemy level2Enemy =
-            collision.gameObject.GetComponent<Level2Enemy>();
-
-        if (level2Enemy == null)
-        {
-            level2Enemy =
-                collision.gameObject.GetComponentInParent<Level2Enemy>();
-        }
+            other.GetComponentInParent<Level2Enemy>();
 
         if (level2Enemy != null)
         {
@@ -62,13 +68,7 @@ public class Bullet : MonoBehaviour
 
         // Level 1 enemy
         Enemy enemy =
-            collision.gameObject.GetComponent<Enemy>();
-
-        if (enemy == null)
-        {
-            enemy =
-                collision.gameObject.GetComponentInParent<Enemy>();
-        }
+            other.GetComponentInParent<Enemy>();
 
         if (enemy != null)
         {

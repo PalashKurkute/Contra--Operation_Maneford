@@ -48,9 +48,7 @@ public class EnemySpawner : MonoBehaviour
         {
             // Count only Level 1 enemies
             Enemy[] enemies =
-                FindObjectsByType<Enemy>(
-                    FindObjectsSortMode.None
-                );
+                FindObjectsByType<Enemy>();
 
             if (enemies.Length >= maxEnemies)
             {
@@ -76,9 +74,7 @@ public class EnemySpawner : MonoBehaviour
         {
             // Count only Level 2 enemies
             Level2Enemy[] enemies =
-                FindObjectsByType<Level2Enemy>(
-                    FindObjectsSortMode.None
-                );
+                FindObjectsByType<Level2Enemy>();
 
             if (enemies.Length >= maxEnemies)
             {
@@ -205,9 +201,7 @@ public class EnemySpawner : MonoBehaviour
     void StopLevel1Enemies()
     {
         Enemy[] enemies =
-            FindObjectsByType<Enemy>(
-                FindObjectsSortMode.None
-            );
+            FindObjectsByType<Enemy>();
 
         foreach (Enemy enemy in enemies)
         {

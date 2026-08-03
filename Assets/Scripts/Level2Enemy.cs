@@ -111,18 +111,31 @@ public class Level2Enemy : MonoBehaviour
             return;
         }
 
-        GameObject bullet = Instantiate(
-            bulletPrefab,
-            firePoint.position,
-            Quaternion.identity
-        );
-
         float direction = 1f;
 
         if (player.position.x < transform.position.x)
         {
             direction = -1f;
         }
+
+        // The fire point sits on the right; mirror it when
+        // shooting left so the shot leaves the gun, not our back
+        Vector3 muzzleLocal = firePoint.localPosition;
+        muzzleLocal.x *= direction;
+
+        Vector3 muzzle = transform.TransformPoint(muzzleLocal);
+
+        GameObject bullet = Instantiate(
+            bulletPrefab,
+            muzzle,
+            Quaternion.identity
+        );
+
+        Effects.MuzzleFlash(
+            muzzle,
+            new Vector2(direction, 0f),
+            transform
+        );
 
         EnemyBullet enemyBullet =
             bullet.GetComponent<EnemyBullet>();
@@ -152,6 +165,13 @@ public class Level2Enemy : MonoBehaviour
     {
         health -= damage;
 
+        HitFlash hitFlash = GetComponent<HitFlash>();
+
+        if (hitFlash != null)
+        {
+            hitFlash.Flash();
+        }
+
         Debug.Log(
             "🔴 Level 2 Enemy took damage! Health = " +
             health
@@ -170,12 +190,14 @@ public class Level2Enemy : MonoBehaviour
         );
 
         EnemyKillManager killManager =
-            FindFirstObjectByType<EnemyKillManager>();
+            FindAnyObjectByType<EnemyKillManager>();
 
         if (killManager != null)
         {
             killManager.EnemyKilled();
         }
+
+        Effects.Explosion(transform.position);
 
         Destroy(gameObject);
     }

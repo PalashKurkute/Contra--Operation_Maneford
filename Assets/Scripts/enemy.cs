@@ -101,10 +101,14 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (stopped)
-            return;
-
         health -= damage;
+
+        HitFlash hitFlash = GetComponent<HitFlash>();
+
+        if (hitFlash != null)
+        {
+            hitFlash.Flash();
+        }
 
         Debug.Log(
             gameObject.name +
@@ -123,7 +127,7 @@ public class Enemy : MonoBehaviour
         Debug.Log("Enemy died!");
 
         EnemyKillManager killManager =
-            FindFirstObjectByType<EnemyKillManager>();
+            FindAnyObjectByType<EnemyKillManager>();
 
         if (killManager != null)
         {
@@ -135,6 +139,8 @@ public class Enemy : MonoBehaviour
                 "EnemyKillManager not found!"
             );
         }
+
+        Effects.Explosion(transform.position);
 
         Destroy(gameObject);
     }

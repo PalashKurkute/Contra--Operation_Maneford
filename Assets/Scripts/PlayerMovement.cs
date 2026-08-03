@@ -4,28 +4,95 @@ using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
+    // Values of the Animator "pose" parameter
+    enum Pose
+    {
+        Idle,
+        Run,
+        Jump,
+        AimUp,
+        RunAimUp,
+        RunAimDown,
+        Prone
+    }
+
     public float moveSpeed = 5f;
     public float jumpForce = 7f;
 
     public GameObject bulletPrefab;
-    public Transform firePoint;
+
+    // Where bullets spawn for each pose, in local units
+    // while facing right (mirrored when facing left)
+    [Header("Muzzle Offsets")]
+    public Vector2 muzzleStand = new Vector2(0.13f, 0.025f);
+    public Vector2 muzzleRun = new Vector2(0.13f, 0.045f);
+    public Vector2 muzzleUp = new Vector2(0.025f, 0.205f);
+    public Vector2 muzzleRunUp = new Vector2(0.085f, 0.145f);
+    public Vector2 muzzleRunDown = new Vector2(0.085f, -0.055f);
+    public Vector2 muzzleProne = new Vector2(0.115f, -0.055f);
+    public float muzzleAirDistance = 0.12f;
+
+    [Header("Prone / Drop")]
+    // Hitbox height while kneeling (local units)
+    public float proneHeight = 0.2f;
+
+    // How far below us another platform must be
+    // before Down + Jump lets us drop
+    public float dropCheckDistance = 10f;
 
     private Rigidbody2D body;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
+    private BoxCollider2D hitbox;
+
+    private Vector2 standSize;
+    private Vector2 standOffset;
 
     private bool isGrounded;
     private bool isDropping;
+    private bool isProne;
+
+    private float moveInput;
+    private float facing = 1f;
+    private Vector2 aim = Vector2.right;
+    private Pose pose;
+
+    private ContactFilter2D groundFilter;
 
     void Start()
     {
         body = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        hitbox = GetComponent<BoxCollider2D>();
+
+        standSize = hitbox.size;
+        standOffset = hitbox.offset;
+
+        facing = spriteRenderer.flipX ? -1f : 1f;
+
+        // Ground = a solid contact whose normal points up
+        groundFilter.useNormalAngle = true;
+        groundFilter.minNormalAngle = 45f;
+        groundFilter.maxNormalAngle = 135f;
     }
 
     void Update()
     {
+        bool wasGrounded = isGrounded;
+
+        // Ground check (re-evaluated every frame, so walking
+        // off a ledge clears it)
+        isGrounded = !isDropping &&
+            body.linearVelocity.y <= 0.1f &&
+            body.IsTouching(groundFilter);
+
+        // Landing puff
+        if (isGrounded && !wasGrounded)
+        {
+            Effects.Dust(FeetPosition());
+        }
+
         float move = 0f;
 
         // Movement
@@ -41,42 +108,49 @@ public class PlayerMovement : MonoBehaviour
             move = 1f;
         }
 
+        bool up =
+            Keyboard.current.wKey.isPressed ||
+            Keyboard.current.upArrowKey.isPressed;
+
+        bool down =
+            Keyboard.current.sKey.isPressed ||
+            Keyboard.current.downArrowKey.isPressed;
+
+        moveInput = move;
+
         // Flip
-        if (move < 0)
+        if (move != 0)
         {
-            spriteRenderer.flipX = true;
-        }
-        else if (move > 0)
-        {
-            spriteRenderer.flipX = false;
+            facing = move;
+            spriteRenderer.flipX = facing < 0;
         }
 
-        // Run animation
-        animator.SetBool("run", move != 0);
-
-        // Jump
+        // Jump, or Down + Jump to drop through the platform
         if (Keyboard.current.spaceKey.wasPressedThisFrame &&
-            isGrounded &&
-            !isDropping)
+            isGrounded)
         {
-            body.linearVelocity = new Vector2(
-                body.linearVelocity.x,
-                jumpForce
-            );
+            if (down)
+            {
+                TryDropDown();
+            }
+            else
+            {
+                body.linearVelocity = new Vector2(
+                    body.linearVelocity.x,
+                    jumpForce
+                );
 
-            isGrounded = false;
+                isGrounded = false;
+
+                Effects.Dust(FeetPosition());
+            }
         }
 
-        // Drop down
-        if (Keyboard.current.downArrowKey.wasPressedThisFrame &&
-            isGrounded &&
-            !isDropping)
-        {
-            StartCoroutine(DropDown());
-        }
+        UpdateAim(move, up, down);
 
-        // Jump animation
-        animator.SetBool("grounded", isGrounded);
+        SetProne(pose == Pose.Prone);
+
+        animator.SetInteger("pose", (int)pose);
 
         // Shoot
         if (Keyboard.current.jKey.wasPressedThisFrame)
@@ -90,46 +164,133 @@ public class PlayerMovement : MonoBehaviour
         if (isDropping)
             return;
 
-        float move = 0f;
-
-        if (Keyboard.current.aKey.isPressed ||
-            Keyboard.current.leftArrowKey.isPressed)
-        {
-            move = -1f;
-        }
-
-        if (Keyboard.current.dKey.isPressed ||
-            Keyboard.current.rightArrowKey.isPressed)
-        {
-            move = 1f;
-        }
-
         body.linearVelocity = new Vector2(
-            move * moveSpeed,
+            moveInput * moveSpeed,
             body.linearVelocity.y
         );
+    }
+
+    // =========================
+    // AIM
+    // =========================
+
+    // NES Contra rules: on the ground, Up alone aims straight
+    // up, Down alone lies prone, and Up/Down while running aims
+    // diagonally. In the air all 8 directions work.
+    void UpdateAim(float move, bool up, bool down)
+    {
+        float vertical = up ? 1f : down ? -1f : 0f;
+
+        if (!isGrounded)
+        {
+            pose = Pose.Jump;
+
+            aim = new Vector2(move, vertical);
+
+            if (aim == Vector2.zero)
+            {
+                aim.x = facing;
+            }
+        }
+        else if (move == 0)
+        {
+            pose = up ? Pose.AimUp :
+                down ? Pose.Prone :
+                Pose.Idle;
+
+            aim = up ? Vector2.up : new Vector2(facing, 0f);
+        }
+        else
+        {
+            pose = up ? Pose.RunAimUp :
+                down ? Pose.RunAimDown :
+                Pose.Run;
+
+            aim = new Vector2(facing, vertical);
+        }
+
+        aim.Normalize();
+    }
+
+    // Muzzle position for the current pose, facing right
+    Vector2 MuzzleOffset()
+    {
+        switch (pose)
+        {
+            case Pose.Run: return muzzleRun;
+            case Pose.AimUp: return muzzleUp;
+            case Pose.RunAimUp: return muzzleRunUp;
+            case Pose.RunAimDown: return muzzleRunDown;
+            case Pose.Prone: return muzzleProne;
+
+            // Somersaulting: fire from the middle of the ball
+            case Pose.Jump:
+                return new Vector2(Mathf.Abs(aim.x), aim.y) *
+                    muzzleAirDistance;
+
+            default: return muzzleStand;
+        }
+    }
+
+    // Bottom-centre of the standing hitbox, in world space
+    Vector3 FeetPosition()
+    {
+        return transform.TransformPoint(
+            new Vector2(0f, standOffset.y - standSize.y / 2f)
+        );
+    }
+
+    // =========================
+    // PRONE
+    // =========================
+
+    // Lying down shrinks the hitbox (feet stay put) so
+    // bullets aimed at a standing player fly overhead
+    void SetProne(bool prone)
+    {
+        if (prone == isProne)
+            return;
+
+        isProne = prone;
+
+        if (prone)
+        {
+            float bottom = standOffset.y - standSize.y / 2f;
+
+            hitbox.size = new Vector2(standSize.x, proneHeight);
+            hitbox.offset = new Vector2(
+                standOffset.x,
+                bottom + proneHeight / 2f
+            );
+        }
+        else
+        {
+            hitbox.size = standSize;
+            hitbox.offset = standOffset;
+        }
     }
 
     // =========================
     // DROP DOWN
     // =========================
 
-    IEnumerator DropDown()
+    void TryDropDown()
     {
-        isDropping = true;
-        isGrounded = false;
+        Collider2D platform = FindPlatformUnderFeet();
 
-        animator.SetBool("grounded", false);
+        // Never drop through the lowest ground into the void
+        if (platform == null || !HasPlatformBelow(platform))
+            return;
 
-        Collider2D playerCollider = GetComponent<Collider2D>();
+        StartCoroutine(DropDown(platform));
+    }
 
-        // Find the platform we are standing on
+    Collider2D FindPlatformUnderFeet()
+    {
         Collider2D[] allColliders =
-            FindObjectsByType<Collider2D>(
-                FindObjectsSortMode.None
-            );
+            FindObjectsByType<Collider2D>();
 
-        Collider2D platformToIgnore = null;
+        Collider2D platform = null;
 
         float closestDistance = Mathf.Infinity;
 
@@ -149,20 +310,41 @@ public class PlayerMovement : MonoBehaviour
                 if (distance < closestDistance)
                 {
                     closestDistance = distance;
-                    platformToIgnore = col;
+                    platform = col;
                 }
             }
         }
 
-        // Ignore ONLY the platform we're standing on
-        if (platformToIgnore != null)
+        return platform;
+    }
+
+    bool HasPlatformBelow(Collider2D platform)
+    {
+        RaycastHit2D[] hits = Physics2D.RaycastAll(
+            transform.position,
+            Vector2.down,
+            dropCheckDistance
+        );
+
+        foreach (RaycastHit2D hit in hits)
         {
-            Physics2D.IgnoreCollision(
-                playerCollider,
-                platformToIgnore,
-                true
-            );
+            if (hit.collider != platform &&
+                hit.collider.CompareTag("Platform"))
+            {
+                return true;
+            }
         }
+
+        return false;
+    }
+
+    IEnumerator DropDown(Collider2D platform)
+    {
+        isDropping = true;
+        isGrounded = false;
+
+        // Ignore ONLY the platform we're standing on
+        Physics2D.IgnoreCollision(hitbox, platform, true);
 
         // Move downward
         body.linearVelocity = new Vector2(
@@ -171,9 +353,12 @@ public class PlayerMovement : MonoBehaviour
         );
 
         // Wait until player has moved below the platform
+        // (give up after a second if something stops us)
         float startY = transform.position.y;
+        float giveUpTime = Time.time + 1f;
 
-        while (transform.position.y > startY - 1f)
+        while (transform.position.y > startY - 1f &&
+            Time.time < giveUpTime)
         {
             yield return null;
         }
@@ -182,14 +367,7 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         // Re-enable collision
-        if (platformToIgnore != null)
-        {
-            Physics2D.IgnoreCollision(
-                playerCollider,
-                platformToIgnore,
-                false
-            );
-        }
+        Physics2D.IgnoreCollision(hitbox, platform, false);
 
         isDropping = false;
     }
@@ -200,74 +378,40 @@ public class PlayerMovement : MonoBehaviour
 
     void Shoot()
     {
-        if (bulletPrefab == null || firePoint == null)
+        if (bulletPrefab == null)
             return;
+
+        Vector2 offset = MuzzleOffset();
+        offset.x *= facing;
+
+        Vector3 muzzle = transform.TransformPoint(offset);
 
         GameObject bullet = Instantiate(
             bulletPrefab,
-            firePoint.position,
+            muzzle,
             Quaternion.identity
         );
 
-        float direction =
-            spriteRenderer.flipX ? -1f : 1f;
+        Effects.MuzzleFlash(muzzle, aim, transform);
 
         Bullet bulletScript =
             bullet.GetComponent<Bullet>();
 
         if (bulletScript != null)
         {
-            bulletScript.SetDirection(direction);
+            bulletScript.SetDirection(aim);
         }
 
         Collider2D bulletCollider =
             bullet.GetComponent<Collider2D>();
 
-        Collider2D playerCollider =
-            GetComponent<Collider2D>();
-
-        if (bulletCollider != null &&
-            playerCollider != null)
+        if (bulletCollider != null)
         {
             Physics2D.IgnoreCollision(
                 bulletCollider,
-                playerCollider
+                hitbox
             );
         }
-    }
-
-    // =========================
-    // GROUND DETECTION
-    // =========================
-
-    private void OnCollisionStay2D(
-        Collision2D collision
-    )
-    {
-        if (isDropping)
-            return;
-
-        foreach (ContactPoint2D contact in collision.contacts)
-        {
-            if (contact.normal.y > 0.5f)
-            {
-                isGrounded = true;
-
-                animator.SetBool(
-                    "grounded",
-                    true
-                );
-
-                return;
-            }
-        }
-    }
-
-    private void OnCollisionExit2D(
-        Collision2D collision
-    )
-    {
-        // Don't change grounded here.
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -275,7 +419,7 @@ public class PlayerMovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy"))
         {
             GameOverManager gameOverManager =
-                FindFirstObjectByType<GameOverManager>();
+                FindAnyObjectByType<GameOverManager>();
 
             if (gameOverManager != null)
             {

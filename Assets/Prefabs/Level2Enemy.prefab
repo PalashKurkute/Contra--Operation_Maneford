@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 4204456505467885637}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.21, y: 0.089999974, z: 0}
+  m_LocalPosition: {x: 0.13, y: 0.045, z: 0}
   m_LocalScale: {x: 0.23821978, y: 0.22412035, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 2098981479329185791}
   - component: {fileID: 3949156886942019965}
   - component: {fileID: 8495966683961888811}
+  - component: {fileID: 5263229627126951841}
   m_Layer: 0
   m_Name: Level2Enemy
   m_TagString: Enemy
@@ -117,7 +118,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 5718797455435194468, guid: 89bd178137ea25a4f8ba4dfde7f54c63, type: 3}
+  m_Sprite: {fileID: 956110729, guid: df65ff3a8f566c441a1c68e07b3e978d, type: 3}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -162,11 +163,11 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.04309967, y: -0.0052124485}
+  m_Offset: {x: 0, y: -0.0052124485}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.26, y: 0.36}
+    pivot: {x: 0.5, y: 0.4375}
+    oldSize: {x: 0.44, y: 0.48}
     newSize: {x: 0.26, y: 0.36}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -241,3 +242,17 @@ MonoBehaviour:
   bulletPrefab: {fileID: 8014948520587417095, guid: 76b913c78018e814b8f29eb2834cd735, type: 3}
   firePoint: {fileID: 2969158656123360340}
   shootInterval: 2
+--- !u!114 &5263229627126951841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9174731444697672212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e9dfae670451404fae8eb7320a82333, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitFlash
+  flashMaterial: {fileID: 2100000, guid: 64258c4f29a2a5a43bde3eb89765f7d8, type: 2}
+  duration: 0.08
