@@ -52,6 +52,9 @@ public class PlayerMovement : MonoBehaviour
     private bool isDropping;
     private bool isProne;
 
+    // Set when the stage is cleared: the player stops obeying keys
+    private bool controlsLocked;
+
     private float moveInput;
     private float facing = 1f;
     private Vector2 aim = Vector2.right;
@@ -116,6 +119,17 @@ public class PlayerMovement : MonoBehaviour
             Keyboard.current.sKey.isPressed ||
             Keyboard.current.downArrowKey.isPressed;
 
+        // No control while the game is paused (game over, level
+        // card) or after the stage is cleared
+        bool hasControl = !controlsLocked && Time.timeScale > 0f;
+
+        if (!hasControl)
+        {
+            move = 0f;
+            up = false;
+            down = false;
+        }
+
         moveInput = move;
 
         // Flip
@@ -126,7 +140,8 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Jump, or Down + Jump to drop through the platform
-        if (Keyboard.current.spaceKey.wasPressedThisFrame &&
+        if (hasControl &&
+            Keyboard.current.spaceKey.wasPressedThisFrame &&
             isGrounded)
         {
             if (down)
@@ -153,10 +168,16 @@ public class PlayerMovement : MonoBehaviour
         animator.SetInteger("pose", (int)pose);
 
         // Shoot
-        if (Keyboard.current.jKey.wasPressedThisFrame)
+        if (hasControl &&
+            Keyboard.current.jKey.wasPressedThisFrame)
         {
             Shoot();
         }
+    }
+
+    public void LockControls()
+    {
+        controlsLocked = true;
     }
 
     void FixedUpdate()

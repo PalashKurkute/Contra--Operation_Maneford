@@ -1,20 +1,15 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [Header("Level 1 Enemy")]
+    [Header("Enemy")]
     public GameObject enemyPrefab;
 
-    [Header("Level 2 Enemy")]
-    public GameObject level2EnemyPrefab;
-
-    [Header("Level 1 Spawn Points")]
-    public Transform leftSpawnPoint;
-    public Transform rightSpawnPoint;
-
-    [Header("Level 2 Spawn Points")]
-    public Transform level2LeftSpawnPoint;
-    public Transform level2RightSpawnPoint;
+    [Header("Spawn Points")]
+    // A random one is picked each time (never one that is
+    // too close to the player)
+    public Transform[] spawnPoints;
 
     [Header("Spawn Settings")]
     public float spawnDelay = 5f;
@@ -22,10 +17,16 @@ public class EnemySpawner : MonoBehaviour
     public float minimumSpawnDistance = 8f;
 
     private float timer = 0f;
-    private bool level2Started = false;
+    private bool stopped = false;
+
+    // Enemies from this spawner that are still alive
+    private List<GameObject> alive = new List<GameObject>();
 
     void Update()
     {
+        if (stopped)
+            return;
+
         timer += Time.deltaTime;
 
         if (timer < spawnDelay)
@@ -38,76 +39,17 @@ public class EnemySpawner : MonoBehaviour
 
     void SpawnEnemy()
     {
-        GameObject prefabToSpawn;
-        Transform spawnPoint;
+        // Forget enemies that have been destroyed
+        alive.RemoveAll(enemy => enemy == null);
 
-        // ==========================
-        // LEVEL 1
-        // ==========================
-        if (!level2Started)
-        {
-            // Count only Level 1 enemies
-            Enemy[] enemies =
-                FindObjectsByType<Enemy>();
-
-            if (enemies.Length >= maxEnemies)
-            {
-                return;
-            }
-
-            prefabToSpawn = enemyPrefab;
-
-            if (Random.value < 0.5f)
-            {
-                spawnPoint = leftSpawnPoint;
-            }
-            else
-            {
-                spawnPoint = rightSpawnPoint;
-            }
-        }
-
-        // ==========================
-        // LEVEL 2
-        // ==========================
-        else
-        {
-            // Count only Level 2 enemies
-            Level2Enemy[] enemies =
-                FindObjectsByType<Level2Enemy>();
-
-            if (enemies.Length >= maxEnemies)
-            {
-                return;
-            }
-
-            prefabToSpawn = level2EnemyPrefab;
-
-            if (Random.value < 0.5f)
-            {
-                spawnPoint = level2LeftSpawnPoint;
-            }
-            else
-            {
-                spawnPoint = level2RightSpawnPoint;
-            }
-        }
+        if (alive.Count >= maxEnemies)
+            return;
 
         // Check prefab
-        if (prefabToSpawn == null)
+        if (enemyPrefab == null)
         {
             Debug.LogError(
                 "❌ Enemy prefab is NOT assigned!"
-            );
-
-            return;
-        }
-
-        // Check spawn point
-        if (spawnPoint == null)
-        {
-            Debug.LogError(
-                "❌ Spawn point is NOT assigned!"
             );
 
             return;
@@ -126,92 +68,63 @@ public class EnemySpawner : MonoBehaviour
             return;
         }
 
-        // Check distance
-        float distance = Vector2.Distance(
-            spawnPoint.position,
-            playerObject.transform.position
-        );
+        // Only spawn points far enough from the player
+        List<Transform> choices = new List<Transform>();
 
-        if (distance < minimumSpawnDistance)
+        foreach (Transform point in spawnPoints)
+        {
+            if (point == null)
+                continue;
+
+            float distance = Vector2.Distance(
+                point.position,
+                playerObject.transform.position
+            );
+
+            if (distance >= minimumSpawnDistance)
+            {
+                choices.Add(point);
+            }
+        }
+
+        if (choices.Count == 0)
         {
             Debug.Log(
-                "⚠️ Spawn point is too close to player: " +
-                spawnPoint.name
+                "⚠️ Every spawn point is too close to the player"
             );
 
             return;
         }
 
+        Transform spawnPoint =
+            choices[Random.Range(0, choices.Count)];
+
         // Spawn
         GameObject newEnemy = Instantiate(
-            prefabToSpawn,
+            enemyPrefab,
             spawnPoint.position,
             Quaternion.identity
         );
 
-        if (level2Started)
-        {
-            Debug.Log(
-                "🔴 LEVEL 2 ENEMY SPAWNED: " +
-                newEnemy.name +
-                " at " +
-                spawnPoint.name
-            );
-        }
-        else
-        {
-            Debug.Log(
-                "🟢 LEVEL 1 ENEMY SPAWNED: " +
-                newEnemy.name +
-                " at " +
-                spawnPoint.name
-            );
-        }
+        alive.Add(newEnemy);
+
+        Debug.Log(
+            "🟢 ENEMY SPAWNED: " +
+            newEnemy.name +
+            " at " +
+            spawnPoint.name
+        );
     }
 
-    public void StartLevel2()
+    public void StopSpawning()
     {
-        if (level2Started)
+        if (stopped)
             return;
 
-        level2Started = true;
-
-        // Reset timer so Level 2 starts spawning
-        timer = 0f;
+        stopped = true;
 
         Debug.Log(
-            "================================"
-        );
-
-        Debug.Log(
-            "🔥 LEVEL 2 STARTED!"
-        );
-
-        Debug.Log(
-            "🔴 Level 2 enemies will now spawn."
-        );
-
-        Debug.Log(
-            "================================"
-        );
-
-        StopLevel1Enemies();
-    }
-
-    void StopLevel1Enemies()
-    {
-        Enemy[] enemies =
-            FindObjectsByType<Enemy>();
-
-        foreach (Enemy enemy in enemies)
-        {
-            enemy.StopEnemy();
-        }
-
-        Debug.Log(
-            "🛑 Stopped " +
-            enemies.Length +
-            " Level 1 enemies."
+            "🛑 Enemy spawning stopped."
         );
     }
 }

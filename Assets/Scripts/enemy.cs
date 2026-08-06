@@ -95,7 +95,7 @@ public class Enemy : MonoBehaviour
         );
 
         Debug.Log(
-            gameObject.name + " stopped because Level 2 started."
+            gameObject.name + " stopped because the stage goal was reached."
         );
     }
 

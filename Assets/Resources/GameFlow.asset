@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbae340f5960e5345a7e42d94d36244f, type: 3}
+  m_Name: GameFlow
+  m_EditorClassIdentifier: Assembly-CSharp::GameFlow
+  mainMenuScene: MainMenu
+  levels:
+  - title: THE FOREST
+  - title: THE KING'S BASE
+  - title: THE KING
+  steps:
+  - sceneName: Cutscene_Intro
+    type: 0
+    level: 0
+    summary: 'The forest at dusk. A distant roar, a chained gate, a parachute opening.
+      Pip: "Day nine. The Maneford Reserve stopped answering our calls... So now
+      we''re sending Rook." Title card: KING OF THE FOREST.'
+  - sceneName: Dialogue_Landing
+    type: 1
+    level: 1
+    summary: The forest edge at dusk. Rook lands in a tree and meets Pip on the radio.
+      The animals have started acting... organized.
+  - sceneName: Stage 1
+    type: 2
+    level: 1
+    summary: Lions in packs. Defeated lions' collars shatter, and they run free.
+  - sceneName: Cutscene_AfterStage1
+    type: 0
+    level: 1
+    summary: 'The last collar shatters and the freed lion runs into the forest. Searchlights
+      sweep a fenced base. GEN: "He freed my lions? Fine. Release the soldiers."'
+  - sceneName: Dialogue_AfterStage1
+    type: 1
+    level: 1
+    summary: 'A clearing. Rook finds a cracked collar with a neural control chip:
+      the lions were being driven.'
+  - sceneName: Dialogue_BeforeStage2
+    type: 1
+    level: 2
+    summary: The base gate, under a giant banner of the General in a lion-mane helmet.
+  - sceneName: Stage 2
+    type: 2
+    level: 2
+    summary: Soldiers at the General's base, with intercom chatter.
+  - sceneName: Cutscene_AfterStage2
+    type: 0
+    level: 2
+    summary: 'The General''s control room. He spills his tea and presses the big
+      red button, and the Mecha-Lion wakes. DOBBS: "Sir, about the fuel gauge..."'
+  - sceneName: Dialogue_AfterStage2
+    type: 1
+    level: 2
+    summary: Dobbs surrenders. Tala is freed from the kennel, and she won't leave
+      until Sultan is free.
+  - sceneName: Dialogue_PreBoss
+    type: 1
+    level: 3
+    summary: The arena. The General unveils the Mecha-Lion, powered by Sultan's recorded
+      roar.
+  - sceneName: BossFight_MechaLion
+    type: 3
+    level: 3
+    summary: 'The Mecha-Lion, 2 phases: pounces and mane missiles, then a charge
+      across the arena below 50% health.'
+  - sceneName: Cutscene_HelicopterEscape
+    type: 0
+    level: 3
+    summary: 'The Mecha-Lion explodes. The General flees by helicopter, and Rook
+      and Tala run for the spare one. GEN: "The King will return! After a short break!"'
+  - sceneName: Dialogue_PreChase
+    type: 1
+    level: 3
+    summary: 'The cockpit. Nobody can fly, and Dobbs radios in: the General''s fuel
+      gauge is broken.'
+  - sceneName: Stage_HelicopterChase
+    type: 4
+    level: 3
+    summary: 'Auto-scrolling helicopter chase: rockets, collared drones and the General''s
+      helicopter.'
+  - sceneName: Cutscene_Ending
+    type: 0
+    level: 0
+    summary: The General's helicopter crashes into a field. Tala pulls off his lion-mane
+      helmet. Sunrise over the quiet forest.
+  - sceneName: Dialogue_Epilogue
+    type: 1
+    level: 0
+    summary: A ridge at sunrise. Sultan and the lions are free, and Rook's secret
+      is out.
+  - sceneName: Credits
+    type: 5
+    level: 0
+    summary: The end. Credits, then back to the main menu.

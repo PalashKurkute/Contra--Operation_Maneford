@@ -1,19 +1,33 @@
 using UnityEngine;
 
+// The stage goal: defeat enough enemies. Once enough are down it
+// opens the way forward (raises the bridge, opens the stage gate),
+// stops the spawner and unlocks the stage exit.
 public class EnemyKillManager : MonoBehaviour
 {
     [Header("Kill Settings")]
     public int enemiesRequired = 20;
 
+    // HUD label for the counter, e.g. "LIONS FREED"
+    public string objectiveLabel = "ENEMIES";
+
     [Header("Bridge")]
+    // Hidden until the goal is reached (optional)
     public GameObject bridge;
 
     [Header("Enemy Spawner")]
     public EnemySpawner enemySpawner;
 
+    [Header("Way Forward")]
+    // Its gate opens when the goal is reached (optional)
+    public StageBounds stageBounds;
+
+    // Unlocks when the goal is reached
+    public StageExit stageExit;
+
     private int enemiesKilled = 0;
 
-    private bool bridgeOpened = false;
+    private bool goalReached = false;
 
     void Start()
     {
@@ -22,18 +36,14 @@ public class EnemyKillManager : MonoBehaviour
         {
             bridge.SetActive(false);
         }
-        else
-        {
-            Debug.LogError(
-                "❌ Bridge is NOT assigned!"
-            );
-        }
+
+        UpdateHud();
     }
 
     public void EnemyKilled()
     {
-        // Don't count anything after bridge opens
-        if (bridgeOpened)
+        // Don't count anything after the goal is reached
+        if (goalReached)
             return;
 
         enemiesKilled++;
@@ -45,18 +55,19 @@ public class EnemyKillManager : MonoBehaviour
             enemiesRequired
         );
 
+        UpdateHud();
+
         if (enemiesKilled >= enemiesRequired)
         {
-            OpenBridge();
+            ReachGoal();
         }
     }
 
-    void OpenBridge()
+    void ReachGoal()
     {
-        if (bridgeOpened)
-            return;
+        goalReached = true;
 
-        bridgeOpened = true;
+        Debug.Log("✅ Stage goal reached!");
 
         // Open bridge
         if (bridge != null)
@@ -67,23 +78,53 @@ public class EnemyKillManager : MonoBehaviour
                 "🌉 BRIDGE OPENED!"
             );
         }
+
+        if (stageBounds != null)
+        {
+            stageBounds.OpenGate();
+        }
+
+        if (enemySpawner != null)
+        {
+            enemySpawner.StopSpawning();
+        }
+
+        // Lions still on screen stop chasing
+        Enemy[] enemies =
+            FindObjectsByType<Enemy>();
+
+        foreach (Enemy enemy in enemies)
+        {
+            enemy.StopEnemy();
+        }
+
+        if (stageExit != null)
+        {
+            stageExit.Unlock();
+        }
         else
         {
             Debug.LogError(
-                "Bridge reference is missing!"
+                "❌ Stage Exit is NOT assigned!"
             );
         }
 
-        // Start Level 2
-        if (enemySpawner != null)
+        if (StageManager.Instance != null)
         {
-            enemySpawner.StartLevel2();
+            StageManager.Instance.ShowGo();
         }
-        else
-        {
-            Debug.LogError(
-                "❌ EnemySpawner is NOT assigned!"
-            );
-        }
+    }
+
+    void UpdateHud()
+    {
+        if (StageManager.Instance == null)
+            return;
+
+        StageManager.Instance.SetObjective(
+            objectiveLabel + "  " +
+            Mathf.Min(enemiesKilled, enemiesRequired) +
+            "/" +
+            enemiesRequired
+        );
     }
 }

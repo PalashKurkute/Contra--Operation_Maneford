@@ -6,11 +6,59 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 86aae35fafbc1f949addee37011408bd
+  - enabled: 1
+    path: Assets/Scenes/Story/Cutscene_Intro.unity
+    guid: a2ed5ff8e42d9704cb3e5edf1980189d
+  - enabled: 1
+    path: Assets/Scenes/Story/Dialogue_Landing.unity
+    guid: 3b70fd8b08b50ee4485befb0710013e1
+  - enabled: 1
     path: Assets/Scenes/Stage 1.unity
     guid: 04ecd914958d8fc40bf35ca06c40bb0c
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 8c9cfa26abfee488c85f1582747f6a02
+    path: Assets/Scenes/Story/Cutscene_AfterStage1.unity
+    guid: 0856af8a3e517b643b0d5cdd35094146
+  - enabled: 1
+    path: Assets/Scenes/Story/Dialogue_AfterStage1.unity
+    guid: 8a32fc0d449336142a7b4e796be31069
+  - enabled: 1
+    path: Assets/Scenes/Story/Dialogue_BeforeStage2.unity
+    guid: c6c99779f4a8e6943aa82ab565cca39b
+  - enabled: 1
+    path: Assets/Scenes/Stage 2.unity
+    guid: 4a0467fcad969124a83769007cc708b1
+  - enabled: 1
+    path: Assets/Scenes/Story/Cutscene_AfterStage2.unity
+    guid: b5dc388ad4c547041a1a1911c3552e66
+  - enabled: 1
+    path: Assets/Scenes/Story/Dialogue_AfterStage2.unity
+    guid: 0d9849f9beb10c74da3c3f0632bdeaff
+  - enabled: 1
+    path: Assets/Scenes/Story/Dialogue_PreBoss.unity
+    guid: 45bf6b79775368043ae53b2eda939317
+  - enabled: 1
+    path: Assets/Scenes/BossFight_MechaLion.unity
+    guid: 1b9c77f74f6ccca4591f83d3b253c04d
+  - enabled: 1
+    path: Assets/Scenes/Story/Cutscene_HelicopterEscape.unity
+    guid: 5f31e3bc1cc6e754c8c9608a269985cc
+  - enabled: 1
+    path: Assets/Scenes/Story/Dialogue_PreChase.unity
+    guid: 6c1e2cb0f7078e546ac6cc9b8227ba97
+  - enabled: 1
+    path: Assets/Scenes/Stage_HelicopterChase.unity
+    guid: abedf892dc0300949b8a2f739cd2c38a
+  - enabled: 1
+    path: Assets/Scenes/Story/Cutscene_Ending.unity
+    guid: d4ae06c19ebf45745973a151d43d4d34
+  - enabled: 1
+    path: Assets/Scenes/Story/Dialogue_Epilogue.unity
+    guid: 5dfae969eb9fe4244b7f9cfef92b1577
+  - enabled: 1
+    path: Assets/Scenes/Credits.unity
+    guid: 0aaeea2360e8c384e8aeb36653fc7586
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
