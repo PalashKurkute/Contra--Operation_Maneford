@@ -28,6 +28,9 @@ public class Enemy : MonoBehaviour
 
         // Lion naturally faces LEFT
         spriteRenderer.flipX = false;
+
+        // A low growl as it arrives
+        Sfx.Play("growl", Random.Range(0.9f, 1.15f));
     }
 
     void FixedUpdate()

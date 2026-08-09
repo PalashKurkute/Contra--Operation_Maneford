@@ -38,6 +38,7 @@ public class PlaceholderScene : MonoBehaviour
 
         if (MenuInput.Confirm())
         {
+            Sfx.Play("menu_select");
             SceneFlow.Next();
         }
     }

@@ -59,6 +59,8 @@ public class Bullet : MonoBehaviour
         {
             Debug.Log("🔴 Player bullet hit Level 2 Enemy!");
 
+            Sfx.Play("hit");
+
             level2Enemy.TakeDamage(damage);
 
             Destroy(gameObject);
@@ -73,6 +75,8 @@ public class Bullet : MonoBehaviour
         if (enemy != null)
         {
             Debug.Log("🟢 Player bullet hit Level 1 Enemy!");
+
+            Sfx.Play("hit");
 
             enemy.TakeDamage(damage);
 

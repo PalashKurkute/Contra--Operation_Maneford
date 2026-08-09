@@ -137,6 +137,8 @@ public class Level2Enemy : MonoBehaviour
             transform
         );
 
+        Sfx.Play("enemy_shoot");
+
         EnemyBullet enemyBullet =
             bullet.GetComponent<EnemyBullet>();
 

@@ -56,6 +56,8 @@ public class StageManager : MonoBehaviour
         if (!cleared)
         {
             goPrompt.SetActive(true);
+
+            Sfx.Play("go");
         }
     }
 
@@ -70,6 +72,8 @@ public class StageManager : MonoBehaviour
 
         goPrompt.SetActive(false);
         stageClearBanner.SetActive(true);
+
+        Sfx.Play("stage_clear");
 
         PlayerMovement player =
             FindAnyObjectByType<PlayerMovement>();

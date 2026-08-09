@@ -59,6 +59,8 @@ public class Effects : MonoBehaviour
 
     public static void Explosion(Vector3 position)
     {
+        Sfx.Play("explosion");
+
         if (Instance == null)
             return;
 

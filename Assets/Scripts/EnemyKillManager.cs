@@ -74,6 +74,8 @@ public class EnemyKillManager : MonoBehaviour
         {
             bridge.SetActive(true);
 
+            Sfx.Play("bridge");
+
             Debug.Log(
                 "🌉 BRIDGE OPENED!"
             );

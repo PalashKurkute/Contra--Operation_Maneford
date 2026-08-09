@@ -56,6 +56,8 @@ public class MainMenu : MonoBehaviour
         }
         while (IsLocked(selected));
 
+        Sfx.Play("menu_move");
+
         Refresh();
     }
 
@@ -71,6 +73,8 @@ public class MainMenu : MonoBehaviour
 
     void Choose()
     {
+        Sfx.Play("menu_select");
+
         if (selected == 0)
         {
             SceneFlow.StartGame();

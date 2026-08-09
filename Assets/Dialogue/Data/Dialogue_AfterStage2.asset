@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b101ddc51b680541b32164e5d3bfef1, type: 3}
+  m_Name: Dialogue_AfterStage2
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueSequence
+  location: THE KING'S BASE - KENNELS
+  background: {fileID: 0}
+  lines:
+  - speakerId: DOBBS
+    emotion: 4
+    text: Don't shoot! Please! I'm, I'm Corporal Dobbs, Assistant Under-Secretary
+      of Royal Lion Logistics and, uh, Fuel Gauge Maintenance, Second Class!
+    side: 0
+    radio: 0
+  - speakerId: ROOK
+    emotion: 0
+    text: That's a lot of titles.
+    side: 0
+    radio: 0
+  - speakerId: DOBBS
+    emotion: 4
+    text: I only started as a feeder! Then I got promoted! Every week! I don't know
+      why!
+    side: 0
+    radio: 0
+  - speakerId: ROOK
+    emotion: 1
+    text: Where's Tala Reyes?
+    side: 0
+    radio: 0
+  - speakerId: DOBBS
+    emotion: 3
+    text: Who? Oh! The ranger! She's in the kennel, the big one, he said she 'knows
+      too much about lions'! I keep telling him it's called 'having a job'!
+    side: 0
+    radio: 0
+  - speakerId: ROOK
+    emotion: 0
+    text: Open it.
+    side: 0
+    radio: 0
+  - speakerId: DOBBS
+    emotion: 4
+    text: Yes! Right now! Please don't tell the General I helped!
+    side: 0
+    radio: 0
+  - speakerId: TALA
+    emotion: 0
+    text: Took you long enough.
+    side: 0
+    radio: 0
+  - speakerId: ROOK
+    emotion: 0
+    text: Traffic.
+    side: 0
+    radio: 0
+  - speakerId: TALA
+    emotion: 5
+    text: The General took my alpha, Sultan. He's using his roar to power something.
+      I'm not leaving until Sultan's free.
+    side: 0
+    radio: 0
+  - speakerId: PIP
+    emotion: 3
+    text: A ranger! A real ranger! Rook, do you know how long I've been talking to
+      just you?
+    side: 0
+    radio: 1
+  - speakerId: ROOK
+    emotion: 0
+    text: I'm right here.
+    side: 0
+    radio: 0
+  nextSceneName: 

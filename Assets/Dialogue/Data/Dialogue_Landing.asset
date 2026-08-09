@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b101ddc51b680541b32164e5d3bfef1, type: 3}
+  m_Name: Dialogue_Landing
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueSequence
+  location: FOREST EDGE - DUSK
+  background: {fileID: 0}
+  lines:
+  - speakerId: PIP
+    emotion: 3
+    text: Rook! You're down! Say something so I know you're alive!
+    side: 0
+    radio: 1
+  - speakerId: ROOK
+    emotion: 0
+    text: Alive.
+    side: 0
+    radio: 0
+  - speakerId: PIP
+    emotion: 0
+    text: That's it? That's all I get?
+    side: 0
+    radio: 1
+  - speakerId: ROOK
+    emotion: 0
+    text: Also cold.
+    side: 0
+    radio: 0
+  - speakerId: PIP
+    emotion: 4
+    text: Okay! Mission brief, fast. Nine days ago the whole reserve went silent.
+      Rangers gone, lights gone, and the animals started acting... organized.
+    side: 0
+    radio: 1
+  - speakerId: ROOK
+    emotion: 0
+    text: Organized how?
+    side: 0
+    radio: 0
+  - speakerId: PIP
+    emotion: 0
+    text: Formations. Patrols. One lion held a door open for another lion.
+    side: 0
+    radio: 1
+  - speakerId: ROOK
+    emotion: 0
+    text: Right.
+    side: 0
+    radio: 0
+  - speakerId: PIP
+    emotion: 5
+    text: If something furry comes at you, please try to discourage it. Gently.
+    side: 0
+    radio: 1
+  - speakerId: ROOK
+    emotion: 0
+    text: I'll discourage it. Loudly.
+    side: 0
+    radio: 0
+  nextSceneName: 

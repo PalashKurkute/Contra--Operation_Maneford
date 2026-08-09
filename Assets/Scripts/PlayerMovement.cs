@@ -94,6 +94,7 @@ public class PlayerMovement : MonoBehaviour
         if (isGrounded && !wasGrounded)
         {
             Effects.Dust(FeetPosition());
+            Sfx.Play("land");
         }
 
         float move = 0f;
@@ -158,6 +159,7 @@ public class PlayerMovement : MonoBehaviour
                 isGrounded = false;
 
                 Effects.Dust(FeetPosition());
+                Sfx.Play("jump");
             }
         }
 
@@ -414,6 +416,7 @@ public class PlayerMovement : MonoBehaviour
         );
 
         Effects.MuzzleFlash(muzzle, aim, transform);
+        Sfx.Play("shoot");
 
         Bullet bulletScript =
             bullet.GetComponent<Bullet>();

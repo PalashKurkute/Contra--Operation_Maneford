@@ -202,6 +202,19 @@ public class SceneFlow : MonoBehaviour
         Instance.Load(Instance.flow.mainMenuScene);
     }
 
+    // Jump to a scene by name (it must be in the Build Settings).
+    // The flow then carries on from wherever that scene is.
+    public static void LoadScene(string sceneName)
+    {
+        if (Instance == null)
+        {
+            SceneManager.LoadScene(sceneName);
+            return;
+        }
+
+        Instance.Load(sceneName);
+    }
+
     // =========================
     // LOADING
     // =========================
@@ -279,6 +292,8 @@ public class SceneFlow : MonoBehaviour
 
             levelNumberText.text = "LEVEL " + level;
             levelTitleText.text = flow.LevelTitle(level);
+
+            Sfx.Play("level_start");
 
             yield return FadeGroup(levelCard, 1f);
 

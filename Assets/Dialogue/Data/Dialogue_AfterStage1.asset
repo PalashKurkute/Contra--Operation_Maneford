@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b101ddc51b680541b32164e5d3bfef1, type: 3}
+  m_Name: Dialogue_AfterStage1
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueSequence
+  location: THE CLEARING
+  background: {fileID: 0}
+  lines:
+  - speakerId: ROOK
+    emotion: 0
+    text: Found something. A collar. It's cracked open.
+    side: 0
+    radio: 0
+  - speakerId: PIP
+    emotion: 3
+    text: Scan it! Hold it up... oh no. That's a neural control chip. Rook, those
+      lions weren't aggressive. They were being driven.
+    side: 0
+    radio: 1
+  - speakerId: ROOK
+    emotion: 5
+    text: They didn't know what they were doing.
+    side: 0
+    radio: 0
+  - speakerId: PIP
+    emotion: 5
+    text: No. They were scared the whole time.
+    side: 0
+    radio: 1
+  - speakerId: ROOK
+    emotion: 1
+    text: Then whoever did this is going to have a very bad day.
+    side: 0
+    radio: 0
+  - speakerId: PIP
+    emotion: 3
+    text: There's a name tag on the collar. 'Reserve Ranger Unit 3, T. Reyes.' Somebody
+      raised this one.
+    side: 0
+    radio: 1
+  - speakerId: ROOK
+    emotion: 0
+    text: Where is she?
+    side: 0
+    radio: 0
+  - speakerId: PIP
+    emotion: 0
+    text: My guess? Wherever the lions came from. There's a base east of you.
+    side: 0
+    radio: 1
+  - speakerId: ROOK
+    emotion: 0
+    text: Not a cat person. But I'm going.
+    side: 0
+    radio: 0
+  nextSceneName: 

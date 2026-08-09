@@ -1,0 +1,155 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12f4555d37dae734baa9e407d3d2fb85, type: 3}
+  m_Name: Cast
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueCast
+  speakers:
+  - id: ROOK
+    displayName: ROOK
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+    side: 1
+    radio: 0
+    voicePitch: 0.8
+    talkSpeed: 1
+    portraits:
+    - emotion: 0
+      sprite: {fileID: 21300000, guid: aadae77065918e94dbf3adb4bb8477bc, type: 3}
+    - emotion: 1
+      sprite: {fileID: 21300000, guid: 49cb5722c91781f468dbd08c9fd23636, type: 3}
+    - emotion: 2
+      sprite: {fileID: 21300000, guid: ce87b75613f0a34489b44355c27ab76c, type: 3}
+    - emotion: 3
+      sprite: {fileID: 21300000, guid: 4b134625de1ae3c40a02a4cfeeb3b786, type: 3}
+    - emotion: 4
+      sprite: {fileID: 21300000, guid: 1ff7981d27ad0a34a89771fd768c1a8c, type: 3}
+    - emotion: 5
+      sprite: {fileID: 21300000, guid: 149899eceb5e8444d8831dae52e4cc92, type: 3}
+  - id: PIP
+    displayName: PIP
+    nameColor: {r: 0.35, g: 0.9, b: 1, a: 1}
+    side: 2
+    radio: 1
+    voicePitch: 1.35
+    talkSpeed: 1.25
+    portraits:
+    - emotion: 0
+      sprite: {fileID: 21300000, guid: 09ef30e4116f2ea408ad60f4a52e6355, type: 3}
+    - emotion: 1
+      sprite: {fileID: 21300000, guid: 6a8c35493679db04fa4cc9b95bbf7b31, type: 3}
+    - emotion: 2
+      sprite: {fileID: 21300000, guid: f9d2f7afa57b09f41b3038768741cc6e, type: 3}
+    - emotion: 3
+      sprite: {fileID: 21300000, guid: ea16ad82a13530242bb8e68ea5539813, type: 3}
+    - emotion: 4
+      sprite: {fileID: 21300000, guid: 0ff85659b8dd2174fa6ec16f07e5e989, type: 3}
+    - emotion: 5
+      sprite: {fileID: 21300000, guid: 26ca55351752a8c469622551d90262dd, type: 3}
+  - id: TALA
+    displayName: TALA
+    nameColor: {r: 0.45, g: 0.9, b: 0.45, a: 1}
+    side: 2
+    radio: 0
+    voicePitch: 1.05
+    talkSpeed: 0.95
+    portraits:
+    - emotion: 0
+      sprite: {fileID: 21300000, guid: 050256cfcbcc12f43bb4f25af631b952, type: 3}
+    - emotion: 1
+      sprite: {fileID: 21300000, guid: 943c98dc1df341148abc5099e73b786c, type: 3}
+    - emotion: 2
+      sprite: {fileID: 21300000, guid: 8134d00f0471eb242be17015a3f8a93b, type: 3}
+    - emotion: 3
+      sprite: {fileID: 21300000, guid: a2a969371c36b3b45889e81282033581, type: 3}
+    - emotion: 4
+      sprite: {fileID: 21300000, guid: fcdcff071c7bd224593868f0ecd42072, type: 3}
+    - emotion: 5
+      sprite: {fileID: 21300000, guid: 4c48c221388da794c9aa637d2874d8c0, type: 3}
+  - id: GEN
+    displayName: GENERAL
+    nameColor: {r: 1, g: 0.82, b: 0.25, a: 1}
+    side: 2
+    radio: 0
+    voicePitch: 0.7
+    talkSpeed: 0.85
+    portraits:
+    - emotion: 0
+      sprite: {fileID: 21300000, guid: 51ce8df31b2044d41bded3e25ddc77dd, type: 3}
+    - emotion: 1
+      sprite: {fileID: 21300000, guid: e466e662c80525f44a3e2ec440810b6b, type: 3}
+    - emotion: 2
+      sprite: {fileID: 21300000, guid: 1630e0351f996d247906205e36bc6002, type: 3}
+    - emotion: 3
+      sprite: {fileID: 21300000, guid: 7050fa239b2ee1e488c4a6a0fa60b531, type: 3}
+    - emotion: 4
+      sprite: {fileID: 21300000, guid: 188e448c3f07df042a119220c449d525, type: 3}
+    - emotion: 5
+      sprite: {fileID: 21300000, guid: 952a1faccf5f2e4419170ecf85d451d2, type: 3}
+  - id: DOBBS
+    displayName: DOBBS
+    nameColor: {r: 1, g: 0.6, b: 0.2, a: 1}
+    side: 2
+    radio: 0
+    voicePitch: 1.55
+    talkSpeed: 1.3
+    portraits:
+    - emotion: 0
+      sprite: {fileID: 21300000, guid: 6d932bd7e5739804c9a18fc9505e0ba1, type: 3}
+    - emotion: 1
+      sprite: {fileID: 21300000, guid: 5c0b4ccb991b7044ab062d3b443a697d, type: 3}
+    - emotion: 2
+      sprite: {fileID: 21300000, guid: 7bf9005ce1abe8141b285504525c9cd8, type: 3}
+    - emotion: 3
+      sprite: {fileID: 21300000, guid: 4518142dfc8924c46ac80b447ae51ef0, type: 3}
+    - emotion: 4
+      sprite: {fileID: 21300000, guid: d5afc27c91fb0f549b0e0f04904ad90f, type: 3}
+    - emotion: 5
+      sprite: {fileID: 21300000, guid: 10d6dc3b068c26b4a832de932f518ba1, type: 3}
+  - id: PA
+    displayName: INTERCOM
+    nameColor: {r: 0.72, g: 0.72, b: 0.75, a: 1}
+    side: 2
+    radio: 1
+    voicePitch: 0.9
+    talkSpeed: 1
+    portraits:
+    - emotion: 0
+      sprite: {fileID: 21300000, guid: 6995355fb0ceb4e479505902e6f9c6f3, type: 3}
+    - emotion: 1
+      sprite: {fileID: 21300000, guid: a98eafb9ff3785d4f989ebf1ba5b0c54, type: 3}
+    - emotion: 2
+      sprite: {fileID: 21300000, guid: 46270069e8148ed46ad2018a2e816958, type: 3}
+    - emotion: 3
+      sprite: {fileID: 21300000, guid: af1ce04dd24e6a4438e95d26f862ea45, type: 3}
+    - emotion: 4
+      sprite: {fileID: 21300000, guid: f4263a4a0832e9b4bab0a4ae4a4cde18, type: 3}
+    - emotion: 5
+      sprite: {fileID: 21300000, guid: 02459fc9fec1d7247948d6da899e5113, type: 3}
+  - id: SULTAN
+    displayName: SULTAN
+    nameColor: {r: 0.88, g: 0.62, b: 0.3, a: 1}
+    side: 2
+    radio: 0
+    voicePitch: 0.5
+    talkSpeed: 1
+    portraits:
+    - emotion: 0
+      sprite: {fileID: 21300000, guid: 4276a5a2f555ecc4c99a562a8369084b, type: 3}
+    - emotion: 1
+      sprite: {fileID: 21300000, guid: 702f5c533935f3d4c9a6b7b1e2da95b2, type: 3}
+    - emotion: 2
+      sprite: {fileID: 21300000, guid: f4195f06ec9ca934683752349d112c18, type: 3}
+    - emotion: 3
+      sprite: {fileID: 21300000, guid: ae6e139b581e3664b83292da84b524ee, type: 3}
+    - emotion: 4
+      sprite: {fileID: 21300000, guid: 1c34231d678763b429b15483149ead4b, type: 3}
+    - emotion: 5
+      sprite: {fileID: 21300000, guid: 13a469beab43c1c4d89ee012b0acca42, type: 3}

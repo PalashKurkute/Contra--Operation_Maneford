@@ -27,6 +27,8 @@ public class GameOverManager : MonoBehaviour
 
         gameOverPanel.SetActive(true);
 
+        Sfx.Play("game_over");
+
         Time.timeScale = 0f;
     }
 

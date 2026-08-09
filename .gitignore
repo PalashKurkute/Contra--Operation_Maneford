@@ -60,3 +60,6 @@ crashlytics-build.properties
 
 # Claude Code personal settings
 .claude/settings.local.json
+
+# Python caches from the Tools scripts
+__pycache__/

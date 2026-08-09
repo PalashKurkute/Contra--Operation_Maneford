@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b101ddc51b680541b32164e5d3bfef1, type: 3}
+  m_Name: Dialogue_PreBoss
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueSequence
+  location: THE ARENA
+  background: {fileID: 0}
+  lines:
+  - speakerId: GEN
+    emotion: 2
+    text: Behold! The Mecha-Lion! King of the forest, king of the beasts, king of
+      ME!
+    side: 0
+    radio: 0
+  - speakerId: ROOK
+    emotion: 0
+    text: It's a robot lion.
+    side: 0
+    radio: 0
+  - speakerId: GEN
+    emotion: 1
+    text: It is a MAGNIFICENT robot lion! Four defense budgets! Ten years of my life!
+    side: 0
+    radio: 0
+  - speakerId: TALA
+    emotion: 1
+    text: That roar. That's Sultan's voice. You recorded him.
+    side: 1
+    radio: 0
+  - speakerId: GEN
+    emotion: 2
+    text: I borrowed it. A king needs a voice.
+    side: 0
+    radio: 0
+  - speakerId: TALA
+    emotion: 1
+    text: A king needs a kingdom. You have a fence.
+    side: 1
+    radio: 0
+  - speakerId: GEN
+    emotion: 1
+    text: '{shake}Silence! The King is ROARING!'
+    side: 0
+    radio: 0
+  - speakerId: PIP
+    emotion: 0
+    text: Rook, whatever you do, do not let him do a speech.
+    side: 0
+    radio: 1
+  - speakerId: ROOK
+    emotion: 0
+    text: Too late.
+    side: 0
+    radio: 0
+  nextSceneName: 

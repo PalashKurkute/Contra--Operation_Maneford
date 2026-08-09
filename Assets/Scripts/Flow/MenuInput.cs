@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 // Keys shared by the menus and story screens
 public static class MenuInput
 {
-    // Enter, or J (the fire button), confirms and continues
+    // Enter, Space or J (the fire button) confirms and continues
     public static bool Confirm()
     {
         Keyboard keyboard = Keyboard.current;
@@ -11,7 +11,18 @@ public static class MenuInput
         return keyboard != null &&
             (keyboard.enterKey.wasPressedThisFrame ||
             keyboard.numpadEnterKey.wasPressedThisFrame ||
+            keyboard.spaceKey.wasPressedThisFrame ||
             keyboard.jKey.wasPressedThisFrame);
+    }
+
+    // Enter held down: hold it to skip a whole cutscene or dialogue
+    public static bool SkipHeld()
+    {
+        Keyboard keyboard = Keyboard.current;
+
+        return keyboard != null &&
+            (keyboard.enterKey.isPressed ||
+            keyboard.numpadEnterKey.isPressed);
     }
 
     public static bool Back()
