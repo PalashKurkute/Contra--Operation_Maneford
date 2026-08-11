@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f9ae74e764118d47ad1ad6af44b0f3f, type: 3}
+  m_Name: Cutscene_Intro
+  m_EditorClassIdentifier: Assembly-CSharp::CutsceneData
+  clip: {fileID: 32900000, guid: 940dc26e0bb296846aea1b88b70df086, type: 3}
+  volume: 1
+  subtitles:
+  - start: 2
+    end: 5.95
+    speaker: PIP
+    speakerColor: {r: 0.35, g: 0.9, b: 1, a: 1}
+    text: Day nine. The Maneford Reserve stopped answering our calls.
+  - start: 6.3
+    end: 7.45
+    speaker: PIP
+    speakerColor: {r: 0.35, g: 0.9, b: 1, a: 1}
+    text: We sent drones.
+  - start: 10
+    end: 12.3
+    speaker: PIP
+    speakerColor: {r: 0.35, g: 0.9, b: 1, a: 1}
+    text: They came back with... questions.
+  - start: 15.9
+    end: 17.6
+    speaker: PIP
+    speakerColor: {r: 0.35, g: 0.9, b: 1, a: 1}
+    text: So now we're sending Rook.
+  placeholderImage: {fileID: 0}
+  placeholderText: 'Aerial shot of the forest at dusk, quiet. A distant roar. A chained
+    gate. A parachute opens. Title card: KING OF THE FOREST.'
+  placeholderLength: 24.2

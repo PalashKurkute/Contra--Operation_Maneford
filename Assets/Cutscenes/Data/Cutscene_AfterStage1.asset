@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f9ae74e764118d47ad1ad6af44b0f3f, type: 3}
+  m_Name: Cutscene_AfterStage1
+  m_EditorClassIdentifier: Assembly-CSharp::CutsceneData
+  clip: {fileID: 0}
+  volume: 1
+  subtitles:
+  - start: 4.5
+    end: 8.5
+    speaker: GENERAL
+    speakerColor: {r: 1, g: 0.82, b: 0.25, a: 1}
+    text: He freed my lions? Fine. Release the soldiers.
+  placeholderImage: {fileID: 0}
+  placeholderText: The last collar in the pack shatters. The freed lion shakes its
+    head, looks back at Rook for a beat, then runs into the forest. In the distance,
+    searchlights sweep over a fenced military base with a giant banner of the General's
+    face.
+  placeholderLength: 9

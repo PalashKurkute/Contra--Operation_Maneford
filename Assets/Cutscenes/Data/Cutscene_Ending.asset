@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f9ae74e764118d47ad1ad6af44b0f3f, type: 3}
+  m_Name: Cutscene_Ending
+  m_EditorClassIdentifier: Assembly-CSharp::CutsceneData
+  clip: {fileID: 0}
+  volume: 1
+  subtitles: []
+  placeholderImage: {fileID: 0}
+  placeholderText: The General's helicopter sputters, spins, and crashes into a field.
+    He crawls out with the mane helmet crooked. Rook lowers his gun. Tala steps forward
+    and pulls the lion-mane helmet off the General's head. Sunrise over the quiet
+    forest.
+  placeholderLength: 9

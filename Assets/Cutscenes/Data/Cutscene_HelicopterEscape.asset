@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f9ae74e764118d47ad1ad6af44b0f3f, type: 3}
+  m_Name: Cutscene_HelicopterEscape
+  m_EditorClassIdentifier: Assembly-CSharp::CutsceneData
+  clip: {fileID: 0}
+  volume: 1
+  subtitles:
+  - start: 3.5
+    end: 6.6
+    speaker: GENERAL
+    speakerColor: {r: 1, g: 0.82, b: 0.25, a: 1}
+    text: This is not over! The King will return!
+  - start: 7.4
+    end: 9.4
+    speaker: GENERAL
+    speakerColor: {r: 1, g: 0.82, b: 0.25, a: 1}
+    text: After a short break!
+  placeholderImage: {fileID: 0}
+  placeholderText: The Mecha-Lion collapses and explodes. The General climbs out
+    of the wreckage with singed hair and his helmet askew, runs for a helicopter,
+    and lifts off. A second helicopter (unlocked, no pilot) sits nearby. Rook and
+    Tala run to it.
+  placeholderLength: 10.5

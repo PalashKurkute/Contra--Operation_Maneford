@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f9ae74e764118d47ad1ad6af44b0f3f, type: 3}
+  m_Name: Cutscene_AfterStage2
+  m_EditorClassIdentifier: Assembly-CSharp::CutsceneData
+  clip: {fileID: 0}
+  volume: 1
+  subtitles:
+  - start: 3
+    end: 5
+    speaker: GENERAL
+    speakerColor: {r: 1, g: 0.82, b: 0.25, a: 1}
+    text: Wake the Mecha-Lion.
+  - start: 5.3
+    end: 7.6
+    speaker: DOBBS
+    speakerColor: {r: 1, g: 0.6, b: 0.2, a: 1}
+    text: Sir, about the fuel gauge...
+  - start: 7.8
+    end: 9.8
+    speaker: GENERAL
+    speakerColor: {r: 1, g: 0.82, b: 0.25, a: 1}
+    text: Not now, Dobbs!
+  placeholderImage: {fileID: 0}
+  placeholderText: A control room full of monitors showing Rook beating the soldiers.
+    The General sips tea, spills it, and presses a big red button labeled "DO NOT
+    PRESS (ROYAL)". A hangar door opens and the Mecha-Lion's glowing eyes light up.
+    In the background, Dobbs raises his hand.
+  placeholderLength: 11
