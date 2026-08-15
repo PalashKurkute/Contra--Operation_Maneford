@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b101ddc51b680541b32164e5d3bfef1, type: 3}
+  m_Name: Overlay_Stage2_Start
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueSequence
+  location: 
+  background: {fileID: 0}
+  lines:
+  - speakerId: DOBBS
+    emotion: 0
+    text: Attention all personnel. This is Royal Herald Dobbs, Assistant Under-Secretary
+      of Lion Logistics, with a message from His Majesty.
+    side: 0
+    radio: 3
+  nextSceneName: 

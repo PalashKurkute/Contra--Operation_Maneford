@@ -18,6 +18,11 @@ public class EnemyKillManager : MonoBehaviour
     [Header("Enemy Spawner")]
     public EnemySpawner enemySpawner;
 
+    // After this many are down, a big pack charges in at once
+    // (0 = no pack). Raises the story event "pack".
+    public int packAfterKills = 0;
+    public int packSize = 3;
+
     [Header("Way Forward")]
     // Its gate opens when the goal is reached (optional)
     public StageBounds stageBounds;
@@ -57,9 +62,18 @@ public class EnemyKillManager : MonoBehaviour
 
         UpdateHud();
 
+        // Overlay dialogue listens for these (kills_1, kills_2...)
+        StoryEvents.Raise("kills_" + enemiesKilled);
+
         if (enemiesKilled >= enemiesRequired)
         {
             ReachGoal();
+        }
+        else if (enemiesKilled == packAfterKills && enemySpawner != null)
+        {
+            enemySpawner.SpawnPack(packSize);
+
+            StoryEvents.Raise("pack");
         }
     }
 
@@ -91,13 +105,13 @@ public class EnemyKillManager : MonoBehaviour
             enemySpawner.StopSpawning();
         }
 
-        // Lions still on screen stop chasing
+        // Lions still around give up and run off
         Enemy[] enemies =
             FindObjectsByType<Enemy>();
 
         foreach (Enemy enemy in enemies)
         {
-            enemy.StopEnemy();
+            enemy.Retreat();
         }
 
         if (stageExit != null)
@@ -115,6 +129,8 @@ public class EnemyKillManager : MonoBehaviour
         {
             StageManager.Instance.ShowGo();
         }
+
+        StoryEvents.Raise("goal");
     }
 
     void UpdateHud()

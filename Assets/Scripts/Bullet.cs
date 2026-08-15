@@ -42,6 +42,14 @@ public class Bullet : MonoBehaviour
         if (other.isTrigger || other.CompareTag("Player"))
             return;
 
+        // Lions, soldiers, the boss...
+        IDamageable target =
+            other.GetComponentInParent<IDamageable>();
+
+        // Already defeated (e.g. a freed lion running off): fly past
+        if (target != null && !target.IsAlive)
+            return;
+
         hasHit = true;
 
         Effects.Impact(transform.position);
@@ -51,41 +59,13 @@ public class Bullet : MonoBehaviour
             other.gameObject.name
         );
 
-        // Level 2 enemy
-        Level2Enemy level2Enemy =
-            other.GetComponentInParent<Level2Enemy>();
-
-        if (level2Enemy != null)
+        if (target != null)
         {
-            Debug.Log("🔴 Player bullet hit Level 2 Enemy!");
-
             Sfx.Play("hit");
 
-            level2Enemy.TakeDamage(damage);
-
-            Destroy(gameObject);
-
-            return;
+            target.TakeDamage(damage);
         }
 
-        // Level 1 enemy
-        Enemy enemy =
-            other.GetComponentInParent<Enemy>();
-
-        if (enemy != null)
-        {
-            Debug.Log("🟢 Player bullet hit Level 1 Enemy!");
-
-            Sfx.Play("hit");
-
-            enemy.TakeDamage(damage);
-
-            Destroy(gameObject);
-
-            return;
-        }
-
-        // Bullet hit something else
         Destroy(gameObject);
     }
 }

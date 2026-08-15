@@ -179,7 +179,8 @@ def finish(x, peak=0.9, fade_ms=6):
     """Remove DC, fade the tail, normalize."""
     x = highpass(np.asarray(x, dtype=float), 25, order=1)
     n = min(samples(fade_ms / 1000.0), len(x))
-    x[-n:] *= np.linspace(1.0, 0.0, n)
+    if n > 0:
+        x[-n:] *= np.linspace(1.0, 0.0, n)
     top = np.max(np.abs(x))
     if top > 0:
         x = x / top * peak
@@ -360,6 +361,83 @@ def growl():
 
 
 # =========================
+# BOSS AND CHASE
+# =========================
+
+def missile():
+    """Missile launch: a hiss that rises, with a pop."""
+    seconds = 0.45
+    hiss = highpass(white(seconds), 1500) * decay(seconds, 0.18, attack=0.02)
+    rise = tone(slide(300, 900, seconds), seconds, "square", 0.25) * decay(seconds, 0.15)
+    pop = lowpass(nes_noise(0.06, 6000), 2500) * decay(0.06, 0.015)
+    return finish(mix((pop, 0, 0.8), (hiss, 0, 0.6), (rise, 0, 0.25)))
+
+
+def warning():
+    """Attack warning: two sharp alarm beeps."""
+    def beep():
+        return tone(freq("E6"), 0.09, "square", 0.5) * decay(0.09, 0.06)
+    return finish(mix((beep(), 0, 1.0), (beep(), 0.14, 1.0)), 0.85)
+
+
+def alarm():
+    """Phase two: a wailing siren."""
+    seconds = 1.2
+    t = times(seconds)
+    f = 600 + 350 * np.sin(2 * np.pi * 2.5 * t)
+    wail = tone(f, seconds, "square", 0.5) * np.clip(t / 0.05, 0, 1)
+    return finish(fade_from(wail, 0.9, 0.12), 0.8)
+
+
+def big_explosion():
+    """The boss going up: a long rumbling blast."""
+    seconds = 2.2
+    crunch = nes_noise(seconds, slide(7000, 250, seconds)) * decay(seconds, 0.6, attack=0.005)
+    crunch = sweep_lowpass(crunch, 5000, 200)
+    boom = tone(slide(120, 30, 0.9), 0.9, "sine") * decay(0.9, 0.3)
+    rumble = lowpass(white(seconds), 180) * decay(seconds, 0.7)
+    return finish(np.tanh(1.6 * mix((crunch, 0, 1.0), (boom, 0, 1.0), (rumble, 0, 1.2))))
+
+
+def whoosh():
+    """Something huge rushing past (the Mecha-Lion's leap)."""
+    seconds = 0.7
+    air = white(seconds) * np.sin(np.linspace(0, np.pi, samples(seconds))) ** 2
+    air = sweep_lowpass(air, 400, 3000, passes=1)
+    return finish(air, 0.85)
+
+
+def mg():
+    """One machine-gun shot (it fires several a second)."""
+    crack = highpass(nes_noise(0.05, 14000), 900) * decay(0.05, 0.01)
+    body = tone(slide(500, 150, 0.05), 0.05, "square", 0.5) * decay(0.05, 0.015)
+    return finish(crush(mix((crack, 0, 0.7), (body, 0, 0.5)), 6))
+
+
+def rotor():
+    """Helicopter blades: a seamless chopping loop."""
+    seconds = 1.0
+    t = times(seconds)
+    chop = (0.5 + 0.5 * np.sin(2 * np.pi * 14 * t)) ** 3          # 14 chops/s
+    air = lowpass(white(seconds), 700) * (0.35 + 0.65 * chop)
+    hum = tone(56, seconds, "triangle") * 0.25
+    x = air + hum
+    # cross-fade the ends so it loops without a click
+    n = samples(0.05)
+    x[:n] = x[:n] * np.linspace(0, 1, n) + x[-n:] * np.linspace(1, 0, n)
+    x = x[:-n]
+    return finish(x, 0.7, fade_ms=0)
+
+
+def heli_down():
+    """A helicopter spinning out: a falling whine and a sputter."""
+    seconds = 1.6
+    whine = tone(slide(900, 120, seconds), seconds, "saw") * decay(seconds, 0.9)
+    sputter = lowpass(white(seconds), 1200) * (np.random.default_rng(9).random(samples(seconds)) < 0.02)
+    return finish(mix((whine, 0, 0.5), (lowpass(sputter, 900), 0, 1.0)))
+
+
+# =========================
 # MUSIC STINGS
 # =========================
 
@@ -465,6 +543,15 @@ SOUNDS = {
     "collar_break": collar_break,
     "roar": roar,
     "growl": growl,
+    # boss and chase
+    "missile": missile,
+    "warning": warning,
+    "alarm": alarm,
+    "big_explosion": big_explosion,
+    "whoosh": whoosh,
+    "mg": mg,
+    "rotor": rotor,
+    "heli_down": heli_down,
     # music stings
     "level_start": level_start,
     "stage_clear": stage_clear,

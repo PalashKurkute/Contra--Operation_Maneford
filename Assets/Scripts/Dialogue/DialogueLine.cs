@@ -23,7 +23,10 @@ public enum DialogueRadio
     // The speaker's usual setting (Pip is always on the radio)
     Auto,
     On,
-    Off
+    Off,
+
+    // Over the base loudspeakers: static and a [PA] tag
+    Intercom
 }
 
 // One line of dialogue.

@@ -11,6 +11,7 @@ public class Effects : MonoBehaviour
     public GameObject impactPrefab;
     public GameObject explosionPrefab;
     public GameObject dustPrefab;
+    public GameObject collarBreakPrefab;
 
     [Header("Screen Shake")]
     public float explosionShake = 0.18f;
@@ -73,6 +74,17 @@ public class Effects : MonoBehaviour
                 Instance.explosionShakeTime
             );
         }
+    }
+
+    // A lion's mind-control collar shatters (with its chime)
+    public static void CollarBreak(Vector3 position)
+    {
+        Sfx.Play("collar_break");
+
+        if (Instance == null)
+            return;
+
+        Spawn(Instance.collarBreakPrefab, position, 0f);
     }
 
     public static void Dust(Vector3 position)

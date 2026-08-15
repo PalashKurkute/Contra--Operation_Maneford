@@ -37,12 +37,24 @@ public class EnemySpawner : MonoBehaviour
         SpawnEnemy();
     }
 
-    void SpawnEnemy()
+    // A big wave all at once, from several spawn points
+    // (it ignores maxEnemies)
+    public void SpawnPack(int count)
+    {
+        Debug.Log("🦁 A pack of " + count + " is coming!");
+
+        for (int i = 0; i < count; i++)
+        {
+            SpawnEnemy(true);
+        }
+    }
+
+    void SpawnEnemy(bool ignoreLimit = false)
     {
         // Forget enemies that have been destroyed
         alive.RemoveAll(enemy => enemy == null);
 
-        if (alive.Count >= maxEnemies)
+        if (!ignoreLimit && alive.Count >= maxEnemies)
             return;
 
         // Check prefab
@@ -99,10 +111,18 @@ public class EnemySpawner : MonoBehaviour
         Transform spawnPoint =
             choices[Random.Range(0, choices.Count)];
 
+        // Spread a pack out so they don't stack on one spot
+        Vector3 position = spawnPoint.position;
+
+        if (ignoreLimit)
+        {
+            position.x += Random.Range(-1.2f, 1.2f);
+        }
+
         // Spawn
         GameObject newEnemy = Instantiate(
             enemyPrefab,
-            spawnPoint.position,
+            position,
             Quaternion.identity
         );
 

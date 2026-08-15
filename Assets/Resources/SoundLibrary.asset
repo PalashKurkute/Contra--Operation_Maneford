@@ -114,3 +114,43 @@ MonoBehaviour:
     volume: 0.35
     pitchVariation: 0.05
     minInterval: 0.1
+  - name: missile
+    clip: {fileID: 8300000, guid: e50012f62707b9941811a66e25a85f39, type: 3}
+    volume: 0.45
+    pitchVariation: 0.08
+    minInterval: 0.05
+  - name: warning
+    clip: {fileID: 8300000, guid: aab0f34b545308241bbf1b8b4955012e, type: 3}
+    volume: 0.5
+    pitchVariation: 0
+    minInterval: 0.15
+  - name: alarm
+    clip: {fileID: 8300000, guid: fb2dd1c7fbab21240b9077aea4127f92, type: 3}
+    volume: 0.35
+    pitchVariation: 0
+    minInterval: 1
+  - name: big_explosion
+    clip: {fileID: 8300000, guid: 61748c07ce4863747ba9f0402ee0e566, type: 3}
+    volume: 0.8
+    pitchVariation: 0
+    minInterval: 0.5
+  - name: whoosh
+    clip: {fileID: 8300000, guid: a51cf0952f55c1e4cb78b8328956c037, type: 3}
+    volume: 0.55
+    pitchVariation: 0.05
+    minInterval: 0.2
+  - name: mg
+    clip: {fileID: 8300000, guid: 60102f0e42cdaa04884483851cf1af33, type: 3}
+    volume: 0.3
+    pitchVariation: 0.06
+    minInterval: 0.04
+  - name: rotor
+    clip: {fileID: 8300000, guid: de60b484c9d62984abf57610587c07fb, type: 3}
+    volume: 0.3
+    pitchVariation: 0
+    minInterval: 0
+  - name: heli_down
+    clip: {fileID: 8300000, guid: a74a8b1b94ae62a4ba779b9c381f0c3e, type: 3}
+    volume: 0.6
+    pitchVariation: 0
+    minInterval: 0.5

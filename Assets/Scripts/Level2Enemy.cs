@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Level2Enemy : MonoBehaviour
+public class Level2Enemy : MonoBehaviour, IDamageable
 {
     [Header("Movement")]
     public float moveSpeed = 2f;
@@ -17,6 +17,11 @@ public class Level2Enemy : MonoBehaviour
     private SpriteRenderer spriteRenderer;
 
     private float shootTimer = 0f;
+
+    public bool IsAlive
+    {
+        get { return health > 0; }
+    }
 
     void Start()
     {

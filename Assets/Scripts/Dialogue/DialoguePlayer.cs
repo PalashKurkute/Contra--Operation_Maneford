@@ -53,8 +53,11 @@ public class DialoguePlayer : MonoBehaviour
     public float shakeStrength = 18f;
     public float shakeTime = 0.4f;
 
-    const string RadioTag =
+    public const string RadioTag =
         " <size=70%><color=#22D3EE>[RADIO]</color></size>";
+
+    public const string IntercomTag =
+        " <size=70%><color=#B8BCC4>[PA]</color></size>";
 
     private List<DialogueText.Command> commands =
         new List<DialogueText.Command>();
@@ -199,7 +202,9 @@ public class DialoguePlayer : MonoBehaviour
         DialogueCast.Speaker speaker = cast.Find(line.speakerId);
         string id = speaker != null ? speaker.id : line.speakerId;
 
-        bool radio = line.radio == DialogueRadio.On ||
+        bool intercom = line.radio == DialogueRadio.Intercom;
+
+        bool radio = intercom || line.radio == DialogueRadio.On ||
             (line.radio == DialogueRadio.Auto && speaker != null && speaker.radio);
 
         // Who talks on which side
@@ -228,7 +233,7 @@ public class DialoguePlayer : MonoBehaviour
 
         // Name plate on the talker's side
         nameText.text = (speaker != null ? speaker.displayName : id) +
-            (radio ? RadioTag : "");
+            (intercom ? IntercomTag : radio ? RadioTag : "");
         nameText.color = speaker != null ? speaker.nameColor : Color.white;
 
         PlaceNamePlate(side == DialogueSide.Right);

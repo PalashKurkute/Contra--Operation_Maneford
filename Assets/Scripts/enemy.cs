@@ -1,17 +1,39 @@
 using UnityEngine;
+using System.Collections;
 
-public class Enemy : MonoBehaviour
+// A lion under the General's mind-control collar. It stalks the
+// player; when its health runs out the collar shatters, and the lion
+// shakes its head and runs off, free. The lions are victims, so there
+// is no explosion.
+public class Enemy : MonoBehaviour, IDamageable
 {
     [Header("Movement")]
     public float moveSpeed = 2f;
     public float stopDistance = 1.5f;
     public int health = 1;
 
+    [Header("Freed")]
+    // The collar on its neck (optional); it vanishes when it breaks
+    public Transform collar;
+    public float runSpeed = 5f;
+
+    // Removed once this far outside the camera view
+    public float despawnMargin = 3f;
+
     private Transform player;
     private Rigidbody2D body;
     private SpriteRenderer spriteRenderer;
 
-    private bool stopped = false;
+    // Freed or retreating: no longer an enemy
+    private bool released = false;
+    private bool running = false;
+    private float runDirection;
+    private Vector3 collarOffset;
+
+    public bool IsAlive
+    {
+        get { return !released; }
+    }
 
     void Start()
     {
@@ -26,6 +48,11 @@ public class Enemy : MonoBehaviour
         body = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
+        if (collar != null)
+        {
+            collarOffset = collar.localPosition;
+        }
+
         // Lion naturally faces LEFT
         spriteRenderer.flipX = false;
 
@@ -35,10 +62,10 @@ public class Enemy : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (stopped)
+        if (released)
         {
             body.linearVelocity = new Vector2(
-                0f,
+                running ? runDirection * runSpeed : 0f,
                 body.linearVelocity.y
             );
 
@@ -88,22 +115,32 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void StopEnemy()
+    void LateUpdate()
     {
-        stopped = true;
+        // The collar sits on the neck, which swaps sides when it turns
+        if (collar != null)
+        {
+            Vector3 offset = collarOffset;
 
-        body.linearVelocity = new Vector2(
-            0f,
-            body.linearVelocity.y
-        );
+            if (spriteRenderer.flipX)
+            {
+                offset.x = -offset.x;
+            }
 
-        Debug.Log(
-            gameObject.name + " stopped because the stage goal was reached."
-        );
+            collar.localPosition = offset;
+        }
+
+        if (running && OutOfView())
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void TakeDamage(int damage)
     {
+        if (released)
+            return;
+
         health -= damage;
 
         HitFlash hitFlash = GetComponent<HitFlash>();
@@ -121,13 +158,24 @@ public class Enemy : MonoBehaviour
 
         if (health <= 0)
         {
-            Die();
+            BreakCollar();
         }
     }
 
-    void Die()
+    // The stage goal is done: lions still around give up and run off
+    public void Retreat()
     {
-        Debug.Log("Enemy died!");
+        if (released)
+            return;
+
+        Release();
+        RunAway();
+    }
+
+    // Defeated: the collar shatters and the lion is free
+    void BreakCollar()
+    {
+        Debug.Log("🦁 Collar broken! " + gameObject.name + " is free.");
 
         EnemyKillManager killManager =
             FindAnyObjectByType<EnemyKillManager>();
@@ -143,8 +191,95 @@ public class Enemy : MonoBehaviour
             );
         }
 
-        Effects.Explosion(transform.position);
+        Vector3 neck = collar != null ?
+            collar.position :
+            transform.position + Vector3.up * 0.4f;
 
-        Destroy(gameObject);
+        Effects.CollarBreak(neck);
+
+        if (collar != null)
+        {
+            collar.gameObject.SetActive(false);
+        }
+
+        Release();
+        StartCoroutine(ShakeThenRun());
+    }
+
+    // No longer dangerous: it can't hurt the player, and it doesn't
+    // block the player or the other lions
+    void Release()
+    {
+        released = true;
+        gameObject.tag = "Untagged";
+
+        Collider2D mine = GetComponent<Collider2D>();
+
+        if (mine == null)
+            return;
+
+        if (player != null)
+        {
+            Collider2D playerCollider = player.GetComponent<Collider2D>();
+
+            if (playerCollider != null)
+            {
+                Physics2D.IgnoreCollision(mine, playerCollider);
+            }
+        }
+
+        foreach (Enemy other in FindObjectsByType<Enemy>())
+        {
+            Collider2D theirs = other.GetComponent<Collider2D>();
+
+            if (other != this && theirs != null)
+            {
+                Physics2D.IgnoreCollision(mine, theirs);
+            }
+        }
+    }
+
+    IEnumerator ShakeThenRun()
+    {
+        // It shakes its head: left, right, left, right
+        for (int i = 0; i < 4; i++)
+        {
+            spriteRenderer.flipX = !spriteRenderer.flipX;
+
+            yield return new WaitForSeconds(0.12f);
+        }
+
+        RunAway();
+    }
+
+    void RunAway()
+    {
+        // Away from the player
+        runDirection =
+            player != null && player.position.x > transform.position.x ?
+            -1f : 1f;
+
+        // Lion naturally faces LEFT
+        spriteRenderer.flipX = runDirection > 0;
+
+        running = true;
+
+        Effects.Dust(transform.position + Vector3.down * 0.6f);
+
+        // Just in case it never leaves the screen
+        Destroy(gameObject, 8f);
+    }
+
+    bool OutOfView()
+    {
+        Camera cam = Camera.main;
+
+        if (cam == null)
+            return false;
+
+        float halfWidth = cam.orthographicSize * cam.aspect;
+
+        return Mathf.Abs(transform.position.x - cam.transform.position.x) >
+            halfWidth + despawnMargin;
     }
 }
