@@ -35,6 +35,19 @@ public class Enemy : MonoBehaviour, IDamageable
         get { return !released; }
     }
 
+    // In Awake, so a lion that spawns on the same frame the stage
+    // goal sends the pack running can already run
+    void Awake()
+    {
+        body = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (collar != null)
+        {
+            collarOffset = collar.localPosition;
+        }
+    }
+
     void Start()
     {
         GameObject playerObject =
@@ -45,13 +58,9 @@ public class Enemy : MonoBehaviour, IDamageable
             player = playerObject.transform;
         }
 
-        body = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-
-        if (collar != null)
-        {
-            collarOffset = collar.localPosition;
-        }
+        // Already sent running before it got going
+        if (released)
+            return;
 
         // Lion naturally faces LEFT
         spriteRenderer.flipX = false;

@@ -2,11 +2,17 @@ using UnityEngine;
 
 // The stage goal: defeat enough enemies. Once enough are down it
 // opens the way forward (raises the bridge, opens the stage gate),
-// stops the spawner and unlocks the stage exit.
+// stops the spawner and unlocks the stage exit. With clearOnGoal
+// the stage ends right there instead, straight into its cutscene.
 public class EnemyKillManager : MonoBehaviour
 {
     [Header("Kill Settings")]
     public int enemiesRequired = 20;
+
+    // The final kill clears the stage on the spot (slow motion,
+    // STAGE CLEAR, then the cutscene) instead of opening the way
+    // to the exit
+    public bool clearOnGoal = false;
 
     // HUD label for the counter, e.g. "LIONS FREED"
     public string objectiveLabel = "ENEMIES";
@@ -83,6 +89,12 @@ public class EnemyKillManager : MonoBehaviour
 
         Debug.Log("✅ Stage goal reached!");
 
+        if (clearOnGoal)
+        {
+            ClearOnTheSpot();
+            return;
+        }
+
         // Open bridge
         if (bridge != null)
         {
@@ -131,6 +143,31 @@ public class EnemyKillManager : MonoBehaviour
         }
 
         StoryEvents.Raise("goal");
+    }
+
+    void ClearOnTheSpot()
+    {
+        if (enemySpawner != null)
+        {
+            enemySpawner.StopSpawning();
+        }
+
+        // The rest of the pack scatters while the last one goes free
+        foreach (Enemy enemy in FindObjectsByType<Enemy>())
+        {
+            enemy.Retreat();
+        }
+
+        StoryEvents.Raise("goal");
+
+        if (StageManager.Instance != null)
+        {
+            StageManager.Instance.StageClear(true);
+        }
+        else
+        {
+            SceneFlow.Next();
+        }
     }
 
     void UpdateHud()

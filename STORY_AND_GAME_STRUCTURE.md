@@ -100,7 +100,8 @@ The flow above is grouped into **three levels**, like the stages of the original
 | Ending | - | `Cutscene_Ending`, `Dialogue_Epilogue`, `Credits` |
 
 - `MainMenu` comes first (build index 0): Start Game, Level Select, Quit. A level unlocks in Level Select once the player reaches it. `Credits` returns to the main menu.
-- A playable stage ends when its goal is done (Stage 1: free enough lions, and the bridge rises; Stage 2: defeat enough soldiers), the player reaches the exit, and STAGE CLEAR shows. Then the stage's video cutscene plays. A game over retries the same stage.
+- A playable stage ends when its goal is done (Stage 2: defeat enough soldiers), the player reaches the exit, and STAGE CLEAR shows. Then the stage's video cutscene plays. A game over retries the same stage.
+- **Stage 1 ends on the spot:** freeing the 10th lion is the end of the level. That collar break plays in a moment of slow motion, STAGE CLEAR shows, and the game goes straight into `Cutscene_AfterStage1` (no walk to the exit). In Unity this is `clearOnGoal` on the stage's `EnemyKillManager`.
 - In Unity this order lives in the `GameFlow` asset (`Assets/Resources/GameFlow.asset`), and `SceneFlow` follows it. To reorder scenes or rename a level, edit that asset (and this section).
 
 ## 6. Dialogue System Spec
@@ -143,7 +144,7 @@ Played with the `VideoPlayer` on a full-screen `RawImage`/`RenderTexture`. Skipp
 | ID | Planned content | Voiceover / on-screen text |
 |---|---|---|
 | `Cutscene_Intro` | Aerial shot of the forest at dusk, quiet. A distant roar. A chained gate. A parachute opens. Title card: KING OF THE FOREST. | PIP (voiceover): "Day nine. The Maneford Reserve stopped answering our calls. We sent drones. They came back with... questions. So now we're sending Rook." |
-| `Cutscene_AfterStage1` | The last collar in the pack shatters. The freed lion shakes its head, looks back at Rook for a beat, then runs into the forest. In the distance, searchlights sweep over a fenced military base with a giant banner of the General's face. | GEN (voice from a speaker): "He freed my lions? Fine. Release the soldiers." |
+| `Cutscene_AfterStage1` | The last collar in the pack shatters. The freed lion shakes its head, looks back at Rook for a beat, then runs into the forest. In the distance, searchlights sweep over a fenced military base with a giant banner of the General's face. *As made (24.4 s):* a forest clearing at blue hour, close on the sparking collar; it breaks; a two-shot as the lion looks back at Rook and runs off; a far roar as searchlights rise over the hills. Night: the compound seen from the forest edge with Rook in silhouette (caption ROYAL MANEFORD COMPOUND / DAY 9 - 21:40); a push in on the banner while he speaks; the alarm, the gate rolls open and the soldiers march out towards the forest; hard cut to black. | GEN (voice from a speaker): "He freed my lions? Fine. Release the soldiers." |
 | `Cutscene_AfterStage2` | A control room full of monitors showing Rook beating the soldiers. The General sips tea, spills it, and presses a big red button labeled "DO NOT PRESS (ROYAL)." A hangar door opens and the Mecha-Lion's glowing eyes light up. In the background, Dobbs raises his hand. | GEN: "Wake the Mecha-Lion." / DOBBS: "Sir, about the fuel gauge..." / GEN: "Not now, Dobbs!" |
 | `Cutscene_HelicopterEscape` | The Mecha-Lion collapses and explodes. The General climbs out of the wreckage with singed hair and his helmet askew, runs for a helicopter, and lifts off. A second helicopter (unlocked, no pilot) sits nearby. Rook and Tala run to it. | GEN: "This is not over! The King will return! {pause} After a short break!" |
 | `Cutscene_Ending` | The General's helicopter sputters, spins, and crashes into a field. He crawls out with the mane helmet crooked. Rook lowers his gun. Tala steps forward and pulls the lion-mane helmet off the General's head. Sunrise over the quiet forest. | No dialogue, music only. |
@@ -243,7 +244,7 @@ Format: `SPEAKER (emotion): "text"` with optional inline commands.
 - **Start:** PIP [RADIO]: "Movement ahead. Four legs. Big. Please don't shoot it in the face." / ROOK: "Where else would I shoot it?" / PIP [RADIO]: "...Fair."
 - **First lion's collar shatters:** PIP [RADIO]: "The collar broke! It's running off! Rook, that's a win! Gold star!" / ROOK: "I don't want a gold star."
 - **A big pack appears (about the middle of the level):** ROOK: "More." / PIP [RADIO]: "They're flanking you. Somebody trained them to flank."
-- **Near the end of the level (loudspeaker, first villain contact):** GEN (PA): "Intruder. You are trespassing in the King's forest." / ROOK: "Whose forest?" / GEN (PA): "THE KING'S." / ROOK: "Noted."
+- **Near the end of the level (loudspeaker, first villain contact; at the 7th lion freed, since the 10th ends the level):** GEN (PA): "Intruder. You are trespassing in the King's forest." / ROOK: "Whose forest?" / GEN (PA): "THE KING'S." / ROOK: "Noted."
 
 ### 9.2 Stage 2 (soldiers, base intercom, triggered at points in the level)
 - **Start:** DOBBS (PA): "Attention all personnel. This is Royal Herald Dobbs, Assistant Under-Secretary of Lion Logistics, with a message from His Majesty."

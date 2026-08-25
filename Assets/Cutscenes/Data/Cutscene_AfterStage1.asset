@@ -12,17 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f9ae74e764118d47ad1ad6af44b0f3f, type: 3}
   m_Name: Cutscene_AfterStage1
   m_EditorClassIdentifier: Assembly-CSharp::CutsceneData
-  clip: {fileID: 0}
+  clip: {fileID: 32900000, guid: 36ecdd5a8faad624fb55de34a2152dff, type: 3}
   volume: 1
   subtitles:
-  - start: 4.5
-    end: 8.5
+  - start: 12.35
+    end: 14.2
     speaker: GENERAL
     speakerColor: {r: 1, g: 0.82, b: 0.25, a: 1}
-    text: He freed my lions? Fine. Release the soldiers.
+    text: He freed my lions?
+  - start: 15.1
+    end: 16.1
+    speaker: GENERAL
+    speakerColor: {r: 1, g: 0.82, b: 0.25, a: 1}
+    text: Fine.
+  - start: 16.4
+    end: 18.6
+    speaker: GENERAL
+    speakerColor: {r: 1, g: 0.82, b: 0.25, a: 1}
+    text: Release the soldiers.
   placeholderImage: {fileID: 0}
   placeholderText: The last collar in the pack shatters. The freed lion shakes its
     head, looks back at Rook for a beat, then runs into the forest. In the distance,
     searchlights sweep over a fenced military base with a giant banner of the General's
-    face.
-  placeholderLength: 9
+    face. The alarm sounds, the gate opens and the soldiers march out.
+  placeholderLength: 24.4

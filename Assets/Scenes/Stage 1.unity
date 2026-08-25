@@ -7508,7 +7508,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OverlayTrigger
   lines: {fileID: 11400000, guid: c39256694d329ab44ae61dbce5f2a2f8, type: 2}
-  eventName: goal
+  eventName: kills_7
   delay: 1.5
   once: 1
 --- !u!1 &832296978
@@ -25684,6 +25684,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   enemiesRequired: 10
+  clearOnGoal: 1
   objectiveLabel: LIONS FREED
   bridge: {fileID: 433162894}
   enemySpawner: {fileID: 2074441455}
