@@ -8,6 +8,10 @@ and encodes an H.264 MP4 that Unity's VideoPlayer plays everywhere.
 Run from the repo root (needs ffmpeg on the PATH):
     python Tools/cutscene_encode.py Cutscene_Intro 24.2
 
+If the master has a false start before the real take (the director
+restarted while the Recorder kept rolling), pass where the take
+starts as a third argument, e.g. Cutscene_AfterStage2 24.9 8.867.
+
 Writes Assets/Cutscenes/Video/<Cutscene>.mp4.
 """
 
@@ -19,10 +23,11 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 
 
 def main():
-    if len(sys.argv) != 3:
-        sys.exit("Usage: python Tools/cutscene_encode.py <Cutscene> <seconds>")
+    if len(sys.argv) not in (3, 4):
+        sys.exit("Usage: python Tools/cutscene_encode.py <Cutscene> <seconds> [start]")
 
     name, seconds = sys.argv[1], sys.argv[2]
+    start = sys.argv[3] if len(sys.argv) == 4 else "0"
     master = os.path.join(ROOT, "Recordings", name + "_master.mov")
     out_dir = os.path.join(ROOT, "Assets", "Cutscenes", "Video")
     out = os.path.join(out_dir, name + ".mp4")
@@ -34,7 +39,7 @@ def main():
 
     subprocess.run([
         "ffmpeg", "-y", "-v", "error", "-stats",
-        "-i", master, "-t", seconds,
+        "-ss", start, "-i", master, "-t", seconds,
         # Picture: near-lossless for flat pixel art, a keyframe every
         # second so skipping and seeking stay cheap
         "-c:v", "libx264", "-preset", "slow", "-crf", "16",

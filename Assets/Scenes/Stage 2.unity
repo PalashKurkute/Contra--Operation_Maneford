@@ -18896,6 +18896,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   enemiesRequired: 12
+  clearOnGoal: 1
   objectiveLabel: SOLDIERS
   bridge: {fileID: 0}
   enemySpawner: {fileID: 2074441455}

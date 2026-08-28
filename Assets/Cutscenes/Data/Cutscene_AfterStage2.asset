@@ -12,21 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f9ae74e764118d47ad1ad6af44b0f3f, type: 3}
   m_Name: Cutscene_AfterStage2
   m_EditorClassIdentifier: Assembly-CSharp::CutsceneData
-  clip: {fileID: 0}
+  clip: {fileID: 32900000, guid: e6a4ac103f0f47e41a41c4d46e8afba9, type: 3}
   volume: 1
   subtitles:
-  - start: 3
-    end: 5
+  - start: 9.4
+    end: 11.4
     speaker: GENERAL
     speakerColor: {r: 1, g: 0.82, b: 0.25, a: 1}
     text: Wake the Mecha-Lion.
-  - start: 5.3
-    end: 7.6
+  - start: 13.8
+    end: 15.8
     speaker: DOBBS
     speakerColor: {r: 1, g: 0.6, b: 0.2, a: 1}
     text: Sir, about the fuel gauge...
-  - start: 7.8
-    end: 9.8
+  - start: 16
+    end: 17.95
     speaker: GENERAL
     speakerColor: {r: 1, g: 0.82, b: 0.25, a: 1}
     text: Not now, Dobbs!
@@ -35,4 +35,4 @@ MonoBehaviour:
     The General sips tea, spills it, and presses a big red button labeled "DO NOT
     PRESS (ROYAL)". A hangar door opens and the Mecha-Lion's glowing eyes light up.
     In the background, Dobbs raises his hand.
-  placeholderLength: 11
+  placeholderLength: 24.9
