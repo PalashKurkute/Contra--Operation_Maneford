@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f9ae74e764118d47ad1ad6af44b0f3f, type: 3}
   m_Name: Cutscene_HelicopterEscape
   m_EditorClassIdentifier: Assembly-CSharp::CutsceneData
-  clip: {fileID: 0}
+  clip: {fileID: 32900000, guid: dcc5087a72e37a9439ccdfea58d7bbf4, type: 3}
   volume: 1
   subtitles:
-  - start: 3.5
-    end: 6.6
+  - start: 4.2
+    end: 8.1
     speaker: GENERAL
     speakerColor: {r: 1, g: 0.82, b: 0.25, a: 1}
     text: This is not over! The King will return!
-  - start: 7.4
-    end: 9.4
+  - start: 10.9
+    end: 12.5
     speaker: GENERAL
     speakerColor: {r: 1, g: 0.82, b: 0.25, a: 1}
     text: After a short break!
@@ -30,4 +30,4 @@ MonoBehaviour:
     of the wreckage with singed hair and his helmet askew, runs for a helicopter,
     and lifts off. A second helicopter (unlocked, no pilot) sits nearby. Rook and
     Tala run to it.
-  placeholderLength: 10.5
+  placeholderLength: 18.4
