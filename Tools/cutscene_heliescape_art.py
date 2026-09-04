@@ -112,9 +112,9 @@ def tala(pose):
     """Poses: stand, run_0, run_1. Ranger hat, braid, 22x34."""
     c = Canvas(22, 34)
 
-    legs = {"stand": ((9, 22, 9, 31), (12, 22, 13, 31)),
-            "run_0": ((10, 22, 6, 30), (12, 22, 16, 29)),
-            "run_1": ((10, 22, 12, 31), (12, 22, 10, 31))}[pose]
+    legs = {"run_0": ((10, 22, 6, 30), (12, 22, 16, 29)),
+            "run_1": ((10, 22, 12, 31), (12, 22, 10, 31))}.get(
+                pose, ((9, 22, 9, 31), (12, 22, 13, 31)))
     for i, (x0, y0, x1, y1) in enumerate(legs):
         thick(c, x0, y0, x1, y1, KHAKI_DARK if i == 0 else KHAKI, 1)
         c.rect(x1 - 1, y1 + 1, x1 + 2, y1 + 2, BOOT)
@@ -133,8 +133,8 @@ def tala(pose):
     c.set(13, 7, INK)
     c.line(12, 10, 13, 10, TALA_SKIN_DARK)
     c.rect(7, 6, 8, 9, BRAID)
-    braid_end = 17 if pose == "stand" else 15
-    thick(c, 7, 9, 6 if pose == "stand" else 4, braid_end, BRAID, 0)
+    moving = pose.startswith("run")
+    thick(c, 7, 9, 4 if moving else 6, 15 if moving else 17, BRAID, 0)
 
     # Campaign hat: wide brim, pinched crown
     c.line(5, 5, 17, 5, HAT_DARK)
@@ -148,6 +148,13 @@ def tala(pose):
     if pose == "stand":
         thick(c, 11, 13, 11, 19, SHIRT_LIGHT, 0)
         c.set(11, 20, TALA_SKIN)
+    elif pose == "reach":                      # reaching out at shoulder height
+        thick(c, 11, 13, 18, 13, SHIRT_LIGHT, 0)
+        c.rect(19, 12, 20, 13, TALA_SKIN)
+    elif pose == "hold":                       # something held to her chest
+        thick(c, 11, 13, 12, 17, SHIRT_LIGHT, 0)
+        thick(c, 12, 17, 15, 16, SHIRT_LIGHT, 0)
+        c.rect(15, 15, 16, 16, TALA_SKIN)
     else:
         swing = 1 if pose == "run_0" else -1
         thick(c, 11, 13, 11 + 4 * swing, 18, SHIRT_LIGHT, 0)

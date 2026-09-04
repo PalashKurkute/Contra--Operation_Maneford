@@ -80,14 +80,15 @@ def disc(c, cx, cy, rx, ry, color, y_max=None):
 # THE GENERAL, SEATED, FACING RIGHT
 # =========================
 
-def general_head(c, x, y, face, askew=0):
+def general_head(c, x, y, face, askew=0, helmet=True):
     """Face box top-left at (x, y): gold lion helmet, walrus moustache.
-    askew slides the helmet back and tips it (after an explosion)."""
+    askew slides the helmet back and tips it (after an explosion);
+    without the helmet he has thin grey hair."""
     hx, hy = -askew, askew // 2
     # Ponytail, then the mane spikes round the helmet
     c.rect(x - 3, y + 5, x - 1, y + 11, HAIR)
     c.set(x - 2, y + 12, HAIR)
-    for sx, sy in ((-5, 1), (-6, 4), (-5, 7), (-3, -2), (0, -4), (4, -5), (8, -3)):
+    for sx, sy in ((-5, 1), (-6, 4), (-5, 7), (-3, -2), (0, -4), (4, -5), (8, -3)) if helmet else ():
         c.rect(x + sx + hx, y + sy + hy, x + sx + hx + 1, y + sy + hy + 1, MANE)
         c.set(x + sx + hx, y + sy + hy + 1, MANE_DARK)
 
@@ -128,6 +129,12 @@ def general_head(c, x, y, face, askew=0):
     c.set(x + 5, y + 10, STACHE_DARK)
 
     # Helmet: a gold dome, brim, a red jewel and the plume
+    if not helmet:
+        disc(c, x + 4, y + 3, 5, 3, "#8a8a92", y_max=y + 4)
+        c.line(x, y + 1, x + 7, y + 1, "#a8a8b0")
+        c.set(x + 9, y + 4, "#8a8a92")
+        return
+
     x, y = x + hx, y + hy
     disc(c, x + 4, y + 3, 6, 5, HELM, y_max=y + 3)
     disc(c, x + 5, y + 1, 3, 2, HELM_LIGHT, y_max=y)

@@ -12,12 +12,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f9ae74e764118d47ad1ad6af44b0f3f, type: 3}
   m_Name: Cutscene_Ending
   m_EditorClassIdentifier: Assembly-CSharp::CutsceneData
-  clip: {fileID: 0}
+  clip: {fileID: 32900000, guid: 3764c6273ea796144b93bdeb38c52eea, type: 3}
   volume: 1
-  subtitles: []
+  subtitles:
+  - start: 13.4
+    end: 17.5
+    speaker: GENERAL
+    speakerColor: {r: 1, g: 0.82, b: 0.25, a: 1}
+    text: Go on, then. Finish it.
+  - start: 18.4
+    end: 20.3
+    speaker: ROOK
+    speakerColor: {r: 1, g: 1, b: 1, a: 1}
+    text: "Nobody's finishing anything."
+  - start: 21.2
+    end: 25.4
+    speaker: ROOK
+    speakerColor: {r: 1, g: 1, b: 1, a: 1}
+    text: They were never your army. They were just lions.
+  - start: 26.4
+    end: 30.1
+    speaker: GENERAL
+    speakerColor: {r: 1, g: 0.82, b: 0.25, a: 1}
+    text: They were the only ones... who ever bowed.
+  - start: 33.6
+    end: 35.8
+    speaker: TALA
+    speakerColor: {r: 0.45, g: 0.9, b: 0.45, a: 1}
+    text: "It's over, Leopold."
   placeholderImage: {fileID: 0}
-  placeholderText: The General's helicopter sputters, spins, and crashes into a field.
-    He crawls out with the mane helmet crooked. Rook lowers his gun. Tala steps forward
-    and pulls the lion-mane helmet off the General's head. Sunrise over the quiet
-    forest.
-  placeholderLength: 9
+  placeholderText: The General's helicopter crashes at dawn. Rook and Tala walk up;
+    he kneels, they talk, and Tala lifts the lion helmet off his head as the sun
+    rises. Then Rook sits on a ridge among the freed lions.
+  placeholderLength: 54
