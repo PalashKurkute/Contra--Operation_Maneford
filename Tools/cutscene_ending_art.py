@@ -15,6 +15,7 @@ point-filtered sprites at 16 pixels per unit.
 import os
 
 import numpy as np
+from PIL import Image
 
 import cutscene_intro_art as kit
 from cutscene_intro_art import Canvas, rgb, BAYER
@@ -92,7 +93,7 @@ def general_crawl():
     c.save("general_crawl")
 
 
-def general_kneel(face, name):
+def general_kneel(face, name, talk=False):
     """Kneeling, arms hanging. Bare-headed: the helmet is its own sprite."""
     def draw(helmet):
         c = Canvas(30, 39)
@@ -113,15 +114,19 @@ def general_kneel(face, name):
         general_head(c, 10, (1 if face != "sip" else 2) + o, face, askew=2, helmet=helmet)
         return c
 
-    rng_state = escape.rng.bit_generator.state
+    # The same soot every time, so the talking frames match the still ones
     bare = draw(False)
+    escape.rng = np.random.default_rng(5)
     escape.singe(bare, 8)
+    if talk:
+        y = (1 if face != "sip" else 2) + 5
+        bare.rect(16, y + 11, 19, y + 13, "#5a1418")
     bare.save(name)
 
     if name == "general_kneel":
         # The helmet: what the helmeted drawing adds over the bare one
-        escape.rng.bit_generator.state = rng_state
         full = draw(True)
+        escape.rng = np.random.default_rng(5)
         escape.singe(full, 8)
         keep = {rgb(HELM), rgb(HELM_DARK), rgb(HELM_LIGHT), rgb(PLUME), rgb("#4a3020"), rgb("#20140c")}
         helmet = Canvas(30, 39)
@@ -152,7 +157,7 @@ def rim(c, right=True):
                 c.set(x, y, RIM)
 
 
-def rook_sit(frame):
+def rook_sit(frame, wind):
     """Sitting on a rock, knee up, rifle leaning beside him. Frame 1
     reaches out to the lion lying in front of him."""
     c = Canvas(48, 48)
@@ -165,7 +170,7 @@ def rook_sit(frame):
         c.line(round(10 + k), y, round(19 - k * 2), y, SHADE)
     c.rect(14, 19, 16, 21, SHADE)              # neck
     disc(c, 15, 14, 5, 5, SHADE)               # head
-    tails = ((10, 13), (9, 14), (8, 14), (7, 15)) if frame == 0 else ((10, 13), (9, 13), (8, 12), (7, 12))
+    tails = ((10, 13), (9, 13), (8, 12), (7, 12)) if wind else ((10, 13), (9, 14), (8, 14), (7, 15))
     for x, y in tails:                         # bandana tails in the wind
         c.set(x, y, SHADE)
         c.set(x, y + 1, SHADE)
@@ -180,7 +185,7 @@ def rook_sit(frame):
         thick(c, 24, 27, 34, 31, SHADE, 1)
         c.rect(35, 31, 37, 33, SHADE)
     rim(c)
-    c.save("rook_sit_%d" % frame)
+    c.save("rook_sit_%d%s" % (frame, "w" if wind else ""))
 
 
 def ridge():
@@ -204,17 +209,31 @@ def far_rock():
     c.save("far_rock")
 
 
+def tala_talk():
+    """Her holding pose, mouth open."""
+    path = os.path.join(OUT, "tala_hold.png")
+    px = np.array(Image.open(path).convert("RGBA"))
+    for x, y in ((12, 10), (13, 10), (12, 11)):
+        px[y, x] = rgb("#3a1a14")
+    Image.fromarray(px, "RGBA").save(os.path.join(OUT, "tala_hold_talk.png"))
+    print("  tala_hold_talk 22x34")
+
+
 def main():
     print("Writing Ending art to " + os.path.normpath(OUT))
     skies()
     sun()
     general_crawl()
     general_kneel("calm", "general_kneel")
+    general_kneel("calm", "general_kneel_talk", talk=True)
     general_kneel("sip", "general_kneel_sad")
+    general_kneel("sip", "general_kneel_sad_talk", talk=True)
     for pose in ("reach", "hold"):
         escape.tala(pose)
+    tala_talk()
     for frame in (0, 1):
-        rook_sit(frame)
+        for wind in (False, True):
+            rook_sit(frame, wind)
     ridge()
     far_rock()
 

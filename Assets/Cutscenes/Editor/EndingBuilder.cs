@@ -245,10 +245,11 @@ public static class EndingBuilder
         AddCharacter("Rook", a, RookRun[0], new Vector2(-8f, RookY), 15, Predawn);
         AddSprite("Tala", a, LoadSprite(Escape + "tala_run_0.png"), new Vector2(-9.2f, TalaY), 13, tint: Predawn);
 
-        AddSprite("General", a, ArtSprite("general_crawl"), new Vector2(3.9f, Ground + 12f / 16f), 9,
-            tint: Predawn, flipX: true).gameObject.SetActive(false);
-        AddSprite("Helmet", a, ArtSprite("helmet"), KneelAt, 10, tint: Predawn, flipX: true)
+        SpriteRenderer general = AddSprite("General", a, ArtSprite("general_crawl"),
+            new Vector2(3.9f, Ground + 12f / 16f), 9, tint: Predawn, flipX: true);
+        AddSprite("Helmet", general.transform, ArtSprite("helmet"), Vector2.zero, 10, tint: Predawn, flipX: true)
             .gameObject.SetActive(false);
+        general.gameObject.SetActive(false);
 
         AddLight("Fire", a, WreckAt, new Color(1f, 0.55f, 0.2f), 0f, 4f, falloff: 0.4f);
         AddLight("Dawn", a, new Vector2(6f, 0.5f), Sunlight, 0f, 12f, falloff: 0.25f);
@@ -291,6 +292,10 @@ public static class EndingBuilder
 
         AddParallax("Sky", c, ArtSprite("sky_sunrise"), new Vector2(201f, -3.7f), 1f, AnchorC, -100);
         AddParallax("Sun", c, ArtSprite("sun"), new Vector2(203f, -2.6f), 0.95f, AnchorC, -95);
+        AddParallax("Cloud 1", c, LoadSprite(Dusk + "cloud_1.png"), new Vector2(196f, 1.9f), 0.9f, AnchorC, -97,
+            tint: new Color(1f, 0.82f, 0.78f));
+        AddParallax("Cloud 2", c, LoadSprite(Dusk + "cloud_2.png"), new Vector2(204f, 2.6f), 0.92f, AnchorC, -97,
+            tint: new Color(1f, 0.86f, 0.8f));
         AddParallax("Mist", c, LoadSprite(Dusk + "layer_mist.png"), new Vector2(200f, -5.1f), 0.85f, AnchorC, -90);
         AddParallax("Hills", c, LoadSprite(Dusk + "layer_hills.png"), new Vector2(200f, -2.2f), 0.7f, AnchorC, -80);
 
@@ -363,31 +368,31 @@ public static class EndingBuilder
             new Curve(Crawl, 3.3f, Ease.Linear).To(Two, 2.9f),
             Curve.Constant(-1.2f),
             new Curve(Crawl, 1.7f, Ease.Linear).To(Two, 1.55f),
-            Curve.Constant(0.08f));
+            Curve.Constant(0.15f));
 
         Shot(clip, "CM_Two",
             new Curve(Two, 0.95f, Ease.Linear).To(Close, 1.05f),
             Curve.Constant(-0.9f),
             new Curve(Two, 2.05f, Ease.Linear).To(Close, 1.9f),
-            Curve.Constant(0.06f));
+            Curve.Constant(0.15f));
 
         Shot(clip, "CM_Close",
             new Curve(Close, 2.35f, Ease.Linear).To(TalaIn, 2.45f),
             new Curve(Close, -0.95f, Ease.Linear).To(TalaIn, -0.85f),
             new Curve(Close, 1.35f, Ease.Linear).To(TalaIn, 1.15f),
-            Curve.Constant(0.05f));
+            Curve.Constant(0.12f));
 
         Shot(clip, "CM_Tala",
             new Curve(TalaIn, 1.6f, Ease.Linear).To(Ridge, 2.1f),
             new Curve(TalaIn, -0.95f, Ease.Linear).To(Ridge, -0.75f),
             new Curve(TalaIn, 1.9f, Ease.Linear).To(Ridge, 1.65f),
-            Curve.Constant(0.05f));
+            Curve.Constant(0.12f));
 
         Shot(clip, "CM_Ridge",
             new Curve(Ridge, 199.6f, Ease.Linear).To(Wide, 199.8f),
             new Curve(Ridge, -1.1f, Ease.Linear).To(Wide, -1.2f),
             new Curve(Ridge, 2.75f, Ease.Linear).To(Wide, 2.45f),
-            Curve.Constant(0.04f));
+            Curve.Constant(0.08f));
 
         Shot(clip, "CM_Wide",
             new Curve(Wide, 199.9f).To(Black, 201.6f).To(End, 201.7f),
@@ -450,7 +455,7 @@ public static class EndingBuilder
             .Cycle(Approach + 3.8f, Lower, 0.16f, RookIdle)
             .Set(Lower, RookLowered));
         clip.Move(a + "Rook", new Curve(0f, -8f, Ease.Hold).To(Approach, -8f, Ease.Linear).To(Approach + 3.8f, RookAt, Ease.Hold),
-            Curve.Constant(RookY));
+            Bob(new Curve(0f, RookY, Ease.Hold).To(Approach + 3.8f, RookY), RookY, Approach + 3.8f, Ridge, 1f));
 
         // Tala behind him; later she walks past to the General
         Sprite[] talaWalk = { LoadSprite(Escape + "tala_run_0.png"), LoadSprite(Escape + "tala_run_1.png") };
@@ -459,11 +464,14 @@ public static class EndingBuilder
             .Set(Approach + 4f, LoadSprite(Escape + "tala_stand.png"))
             .Cycle(TalaIn, Reach, 0.2f, talaWalk)
             .Set(Reach, ArtSprite("tala_reach"))
-            .Set(Lift + 0.8f, ArtSprite("tala_hold")));
+            .Set(Lift + 0.8f, ArtSprite("tala_hold"))
+            .Cycle(Tala01, Tala01 + 2.1f, 0.12f, ArtSprite("tala_hold_talk"), ArtSprite("tala_hold"))
+            .Set(Tala01 + 2.1f, ArtSprite("tala_hold")));
         clip.Move(a + "Tala",
             new Curve(0f, -9.2f, Ease.Hold).To(Approach, -9.2f, Ease.Linear).To(Approach + 4f, TalaWait, Ease.Hold)
                 .To(TalaIn, TalaWait, Ease.Linear).To(Reach, TalaAt, Ease.Hold),
-            Curve.Constant(TalaY));
+            Bob(new Curve(0f, TalaY, Ease.Hold).To(Approach + 4f, TalaY), TalaY, Approach + 4f, TalaIn, 1.25f)
+                .To(TalaIn, TalaY, Ease.Hold));
 
         // The General: crawls out from behind the wreck, kneels; his
         // face falls; Tala lifts the helmet off
@@ -472,19 +480,28 @@ public static class EndingBuilder
         clip.Sprites(gen, new SpriteKeys()
             .Set(0f, ArtSprite("general_crawl"))
             .Set(Kneel, ArtSprite("general_kneel"))
-            .Set(Gen02 - 0.4f, ArtSprite("general_kneel_sad")));
+            .Cycle(Gen01, Gen01 + 4f, 0.13f, ArtSprite("general_kneel_talk"), ArtSprite("general_kneel"))
+            .Set(Gen01 + 4f, ArtSprite("general_kneel"))
+            .Set(Gen02 - 0.4f, ArtSprite("general_kneel_sad"))
+            .Cycle(Gen02, Gen02 + 3.6f, 0.15f, ArtSprite("general_kneel_sad_talk"), ArtSprite("general_kneel_sad"))
+            .Set(Gen02 + 3.6f, ArtSprite("general_kneel_sad")));
         float crawlY = Ground + 12f / 16f;
+        Curve genY = new Curve(0f, crawlY, Ease.Hold).To(Kneel, KneelAt.y);
+        Bob(genY, KneelAt.y, Kneel + 0.4f, Gen02, 1.1f);
+        Bob(genY, KneelAt.y, Gen02, Lift, 0.42f);          // his shoulders shake
         clip.Move(gen,
             new Curve(0f, 3.9f, Ease.Hold).To(Crawl, 3.9f).To(Kneel - 0.2f, KneelAt.x + 0.1f, Ease.Hold).To(Kneel, KneelAt.x, Ease.Hold),
-            new Curve(0f, crawlY, Ease.Hold).To(Kneel, KneelAt.y, Ease.Hold));
+            genY.To(Lift + 0.1f, KneelAt.y, Ease.Hold));
 
-        Vector2 lifted = KneelAt + new Vector2(-0.15f, 0.45f);
-        Vector2 held = new Vector2(TalaAt, TalaY) + new Vector2(0.28f, 0.09f) - HelmetDome;
-        clip.Active(a + "Helmet", (0f, false), (Kneel, true));
-        clip.Move(a + "Helmet",
-            new Curve(0f, KneelAt.x, Ease.Hold).To(Lift, KneelAt.x).To(Lift + 0.6f, lifted.x).To(Lift + 0.8f, lifted.x).To(Lift + 1.1f, held.x),
-            new Curve(0f, KneelAt.y, Ease.Hold).To(Gen02 - 0.4f, KneelAt.y, Ease.Hold).To(Gen02 - 0.39f, KneelAt.y - 1f / 16f, Ease.Hold)
-                .To(Lift, KneelAt.y - 1f / 16f).To(Lift + 0.6f, lifted.y).To(Lift + 0.8f, lifted.y).To(Lift + 1.1f, held.y));
+        // The helmet rides on his head (as his child) until Tala lifts it
+        Vector2 lifted = new Vector2(-0.15f, 0.45f);
+        Vector2 held = new Vector2(TalaAt, TalaY) + new Vector2(0.28f, 0.09f) - HelmetDome - KneelAt;
+        string helmet = gen + "/Helmet";
+        clip.Active(helmet, (0f, false), (Kneel, true));
+        clip.Move(helmet,
+            new Curve(0f, 0f, Ease.Hold).To(Lift, 0f).To(Lift + 0.6f, lifted.x).To(Lift + 0.8f, lifted.x).To(Lift + 1.1f, held.x),
+            new Curve(0f, 0f, Ease.Hold).To(Gen02 - 0.4f, -1f / 16f, Ease.Hold)
+                .To(Lift, -1f / 16f).To(Lift + 0.6f, lifted.y).To(Lift + 0.8f, lifted.y).To(Lift + 1.1f, held.y));
 
         // The first light of the sun, from the right
         clip.Float(a + "Dawn", typeof(Light2D), "m_Intensity",
@@ -509,10 +526,30 @@ public static class EndingBuilder
             .Set(LionDown, LionFrame(0)));
         clip.Move(c + "Lion C",
             new Curve(0f, 206.5f, Ease.Hold).To(LionIn, 206.5f, Ease.Linear).To(LionDown - 0.6f, 201.2f, Ease.Hold),
-            new Curve(0f, LionLieY + 0.15f, Ease.Hold).To(LionDown, LionLieY + 0.15f).To(LionDown + 0.3f, LionLieY, Ease.Hold));
+            Bob(new Curve(0f, LionLieY + 0.15f, Ease.Hold).To(LionDown, LionLieY + 0.15f).To(LionDown + 0.3f, LionLieY),
+                LionLieY, LionDown + 0.3f, End, 1.3f));
 
         clip.Sprites(c + "Rook", new SpriteKeys()
-            .Set(0f, ArtSprite("rook_sit_0")).Set(Touch, ArtSprite("rook_sit_1")));
+            .Cycle(Ridge, Touch, 0.5f, ArtSprite("rook_sit_0"), ArtSprite("rook_sit_0w"))
+            .Cycle(Touch, End, 0.5f, ArtSprite("rook_sit_1"), ArtSprite("rook_sit_1w")));
+        clip.Move(c + "Rook", Curve.Constant(SitAt.x), Bob(new Curve(0f, SitAt.y, Ease.Hold), SitAt.y, Ridge, End, 1.6f));
+
+        clip.Move(c + "Lion A", Curve.Constant(195.4f), Bob(new Curve(0f, LionLieY, Ease.Hold), LionLieY, Ridge, End, 1.5f));
+        clip.Move(c + "Lion B", Curve.Constant(203.6f),
+            Bob(new Curve(0f, LionLieY + 0.1f, Ease.Hold), LionLieY + 0.1f, Ridge + 0.4f, End, 1.8f));
+
+        clip.Move(c + "Cloud 1", new Curve(Ridge, 196f, Ease.Linear).To(End, 198.6f), Curve.Constant(1.9f));
+        clip.Move(c + "Cloud 2", new Curve(Ridge, 204f, Ease.Linear).To(End, 206.2f), Curve.Constant(2.6f));
+    }
+
+    // A breath (or, with a short period, a sob): y rises a pixel and
+    // settles, from 'from' until 'to'. The curve must be at y by 'from'.
+    static Curve Bob(Curve curve, float y, float from, float to, float period, float amp = 1f / 16f)
+    {
+        bool up = true;
+        for (float t = from + period / 2f; t < to - 0.01f; t += period / 2f, up = !up)
+            curve.To(t, up ? y + amp : y);
+        return curve;
     }
 
     // =========================
