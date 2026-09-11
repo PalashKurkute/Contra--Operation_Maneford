@@ -51,12 +51,12 @@ SHOTS = {
     "crawl": 10.0,      # the General crawls out
     "kneel": 12.2,      # and kneels
     "two": 13.0,        # cut to the two of them
-    "gen_01": 13.4,     # "Go on, then. Finish it."
+    "gen_01": 13.4,     # "Go on, then. The King... is ready."
     "rook_01": 18.4,    # "Nobody's finishing anything."
     "lower": 19.6,      # Rook lowers his gun
     "close": 20.8,      # cut close on the General
     "rook_02": 21.2,    # "They were never your army. They were just lions."
-    "gen_02": 26.4,     # "They were the only ones... who ever bowed."
+    "gen_02": 26.4,     # "They were the only subjects... who ever bowed."
     "tala_in": 30.8,    # cut: Tala steps in
     "reach": 32.0,      # reaches for the helmet
     "lift": 32.4,       # lifts it off
@@ -183,6 +183,15 @@ def crawl():
     write("sfx_crawl", reverb(x, 0.9, 0.18), 0.5)
 
 
+def aim():
+    """Rook's rifle snapping up: a rustle, then the action racked."""
+    x = np.zeros(n(0.9))
+    place(x, bandpass(white(0.25), 500, 4000) * envelope(0.25, 0.03, 0.15) * 0.5, 0.0)
+    place(x, metal_clink(0.25, 2400) * 0.7, 0.18)
+    place(x, metal_clink(0.3, 1800) * 0.8, 0.32)
+    write("sfx_aim", reverb(x, 0.8, 0.15), 0.65)
+
+
 def gun_lower():
     x = metal_clink(0.3, 1700) * 0.6 + bandpass(white(0.3), 600, 3000) * envelope(0.3, 0.02, 0.2) * 0.3
     write("sfx_gun_lower", reverb(x, 0.8, 0.15), 0.4)
@@ -272,6 +281,10 @@ def score():
     for at in np.arange(sh["approach"], sh["crawl"], 1.1):
         place(music, taiko(0.8, 46) * 0.18, at)
 
+    # --- The standoff: a hit as Rook's rifle comes up
+    place(music, taiko(1.8, 44) * 0.8, sh["two"])
+    place(music, brass([D2, A2, D3], 1.4, 900) * decay(1.4, 0.5) * 0.35, sh["two"])
+
     # --- The talk: sparse piano in D minor, strings underneath
     progression = [
         (sh["crawl"] + 0.5, [D3, F3, A3]), (sh["kneel"] + 0.3, [Bb2 * 1, D3, F3]),
@@ -338,6 +351,7 @@ def main():
     field_ambience()
     steps()
     crawl()
+    aim()
     gun_lower()
     helmet_lift()
 

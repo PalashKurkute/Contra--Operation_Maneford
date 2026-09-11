@@ -18,20 +18,21 @@ New-Item -ItemType Directory -Force $out | Out-Null
 
 Add-Type -AssemblyName System.Speech
 
-# The General is beaten and tired now; Rook flat and quiet; Tala calm
-$general = 'rate="-18%" pitch="-14%"'
-$rook = 'rate="-8%" pitch="-4%"'
+# The General as in the earlier cutscenes (slow and grand); Rook
+# lighter and plain; Tala calm
+$general = 'rate="-12%" pitch="-12%"'
+$rook = 'rate="-10%" pitch="+4%"'
 $tala = 'rate="-12%" pitch="-10%"'
 
 $lines = @(
     @{ name = "en_gen_01"; voice = "Microsoft David Desktop"; prosody = $general;
-       ssml = 'Go on, then. <break time="350ms"/> Finish it.' },
+       ssml = 'Go on, then. <break time="350ms"/> The King <break time="300ms"/> is ready.' },
     @{ name = "en_rook_01"; voice = "Microsoft David Desktop"; prosody = $rook;
        ssml = 'Nobody''s finishing anything.' },
     @{ name = "en_rook_02"; voice = "Microsoft David Desktop"; prosody = $rook;
        ssml = 'They were never your army. <break time="400ms"/> They were just lions.' },
-    @{ name = "en_gen_02"; voice = "Microsoft David Desktop"; prosody = 'rate="-25%" pitch="-16%"';
-       ssml = 'They were the only ones <break time="450ms"/> who ever bowed.' },
+    @{ name = "en_gen_02"; voice = "Microsoft David Desktop"; prosody = $general;
+       ssml = 'They were the only subjects <break time="450ms"/> who ever bowed.' },
     @{ name = "en_tala_01"; voice = "Microsoft Zira Desktop"; prosody = $tala;
        ssml = 'It''s over, <break time="200ms"/> Leopold.' }
 )

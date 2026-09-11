@@ -15,9 +15,9 @@ using static CutsceneBuildKit;
 // Builds the shoot scene for Cutscene_Ending, after the helicopter
 // chase (STORY_AND_GAME_STRUCTURE.md, 7): at dawn the General's
 // helicopter sputters and crashes in a field. Rook and Tala walk up;
-// he crawls out and kneels. "Go on, then. Finish it." / "Nobody's
+// he crawls out and kneels. "Go on, then. The King... is ready." / "Nobody's
 // finishing anything." / "They were never your army. They were just
-// lions." / "They were the only ones... who ever bowed." Tala lifts
+// lions." / "They were the only subjects... who ever bowed." Tala lifts
 // the lion helmet off his head as the first light reaches them: "It's
 // over, Leopold." Then sunrise on the ridge: Rook sits among the freed
 // lions, one lies down beside him and he rests his hand on its mane;
@@ -48,12 +48,12 @@ public static class EndingBuilder
     const float Crawl = 10.0f;     // the General crawls out
     const float Kneel = 12.2f;     // and kneels
     const float Two = 13.0f;       // cut to the two of them
-    const float Gen01 = 13.4f;     // "Go on, then. Finish it."
+    const float Gen01 = 13.4f;     // "Go on, then. The King... is ready."
     const float Rook01 = 18.4f;    // "Nobody's finishing anything."
     const float Lower = 19.6f;     // Rook lowers his gun
     const float Close = 20.8f;     // cut close on the General
     const float Rook02 = 21.2f;    // "They were never your army. They were just lions."
-    const float Gen02 = 26.4f;     // "They were the only ones... who ever bowed."
+    const float Gen02 = 26.4f;     // "They were the only subjects... who ever bowed."
     const float TalaIn = 30.8f;    // cut: Tala steps in
     const float Reach = 32.0f;     // reaches for the helmet
     const float Lift = 32.4f;      // lifts it off
@@ -87,7 +87,7 @@ public static class EndingBuilder
 
     static readonly Color Predawn = new Color(0.72f, 0.74f, 0.96f);
     static readonly Color Shade = new Color(0.13f, 0.08f, 0.1f);
-    static readonly Color Charred = new Color(0.4f, 0.32f, 0.34f);
+    static readonly Color Charred = new Color(0.22f, 0.17f, 0.19f);
     static readonly Color Sunlight = new Color(1f, 0.7f, 0.45f);
 
     static Sprite ArtSprite(string name) => LoadSprite(Folder + "Art/" + name + ".png");
@@ -184,6 +184,8 @@ public static class EndingBuilder
         AddControl(timeline, director, "FX Impact", Child(a, "Impact").gameObject, Impact, Approach, 5);
         AddControl(timeline, director, "FX Dust", Child(a, "Dust").gameObject, Impact, Crawl, 7);
         AddControl(timeline, director, "FX Wreck Smoke", Child(a, "Wreck Smoke").gameObject, Rest, Ridge, 9);
+        AddControl(timeline, director, "FX Flames", Child(a, "Flames").gameObject, Impact, Ridge, 15);
+        AddControl(timeline, director, "FX Embers", Child(a, "Embers").gameObject, Rest, Ridge, 17);
         AddControl(timeline, director, "FX Motes", Child(c, "Motes").gameObject, Ridge, End, 11);
         AddControl(timeline, director, "FX Birds", Child(c, "Birds").gameObject, Ridge + 1.5f, End, 13);
 
@@ -251,7 +253,7 @@ public static class EndingBuilder
             .gameObject.SetActive(false);
         general.gameObject.SetActive(false);
 
-        AddLight("Fire", a, WreckAt, new Color(1f, 0.55f, 0.2f), 0f, 4f, falloff: 0.4f);
+        AddLight("Fire", a, WreckAt + new Vector2(-0.8f, -0.2f), new Color(1f, 0.55f, 0.2f), 0f, 6f, falloff: 0.4f);
         AddLight("Dawn", a, new Vector2(6f, 0.5f), Sunlight, 0f, 12f, falloff: 0.25f);
 
         // The crash: a burst of sparks, a cloud of dust, then smoke
@@ -279,7 +281,46 @@ public static class EndingBuilder
         }
         Object.DestroyImmediate(smoke.gameObject);
 
+        Stream(sparks, a, "Flames", WreckAt + new Vector2(-0.3f, -0.3f), 30, 0.5f, -0.5f,
+            new Vector2(0.6f, 1.4f), new Vector2(0.08f, 0.18f), new Color(1f, 0.85f, 0.4f), new Color(1f, 0.35f, 0.08f));
+        Stream(sparks, a, "Embers", WreckAt + new Vector2(-1f, -0.5f), 10, 2.2f, -0.12f,
+            new Vector2(0.3f, 0.9f), new Vector2(0.04f, 0.08f), new Color(1f, 0.7f, 0.3f), new Color(1f, 0.4f, 0.1f));
+
+        // Over Rook's shoulder for the standoff: him, big and dark, in
+        // the foreground, the rifle on the General
+        AddCharacter("Rook OTS", a, RookIdle[0], new Vector2(-0.1f, -1.75f), 30, new Color(0.3f, 0.27f, 0.36f))
+            .transform.localScale = Vector3.one * CharacterScale * 1.6f;
+
         return a;
+    }
+
+    // A steady stream of the intro's sparks, rising (negative gravity)
+    static void Stream(Transform sparks, Transform set, string name, Vector2 position, float rate, float radius,
+        float gravity, Vector2 speed, Vector2 size, Color from, Color to)
+    {
+        GameObject go = Object.Instantiate(sparks.gameObject, set);
+        go.name = name;
+        go.transform.localPosition = position;
+        ParticleSystem ps = go.GetComponent<ParticleSystem>();
+        ParticleSystem.MainModule main = ps.main;
+        main.loop = true;
+        main.startDelay = 0f;
+        main.startLifetime = new ParticleSystem.MinMaxCurve(0.6f, 1.4f);
+        main.startSpeed = new ParticleSystem.MinMaxCurve(speed.x, speed.y);
+        main.startSize = new ParticleSystem.MinMaxCurve(size.x, size.y);
+        main.gravityModifier = gravity;
+        main.maxParticles = 128;
+        main.startColor = new ParticleSystem.MinMaxGradient(from, to);
+        ParticleSystem.EmissionModule emission = ps.emission;
+        emission.rateOverTime = rate;
+        emission.rateOverDistance = 0f;
+        emission.SetBursts(new ParticleSystem.Burst[0]);
+        ParticleSystem.ShapeModule shape = ps.shape;
+        shape.enabled = true;
+        shape.shapeType = ParticleSystemShapeType.Circle;
+        shape.radius = radius;
+        shape.rotation = Vector3.zero;
+        go.SetActive(false);
     }
 
     // =========================
@@ -371,10 +412,10 @@ public static class EndingBuilder
             Curve.Constant(0.15f));
 
         Shot(clip, "CM_Two",
-            new Curve(Two, 0.95f, Ease.Linear).To(Close, 1.05f),
-            Curve.Constant(-0.9f),
-            new Curve(Two, 2.05f, Ease.Linear).To(Close, 1.9f),
-            Curve.Constant(0.15f));
+            new Curve(Two, 1.5f, Ease.Linear).To(Close, 1.7f),
+            new Curve(Two, -0.95f, Ease.Linear).To(Close, -0.85f),
+            new Curve(Two, 2.1f, Ease.Hold).To(Two + 0.02f, 2.1f).To(Two + 0.18f, 1.8f).To(Lower, 1.68f).To(Close, 1.6f),
+            new Curve(Two, 1.4f).To(Two + 0.5f, 0.18f).To(Close, 0.15f));
 
         Shot(clip, "CM_Close",
             new Curve(Close, 2.35f, Ease.Linear).To(TalaIn, 2.45f),
@@ -439,9 +480,9 @@ public static class EndingBuilder
             clip.Float(a + "Heli", typeof(SpriteRenderer), "m_Color." + ch,
                 new Curve(0f, Predawn[ch == "r" ? 0 : ch == "g" ? 1 : 2], Ease.Hold).To(Impact, v, Ease.Hold));
 
-        Curve fire = new Curve(0f, 0f, Ease.Hold).To(Impact, 1.2f);
-        for (float t = Impact + 0.5f; t < Ridge; t += 0.19f)
-            fire.To(t, 0.4f + 0.15f * Mathf.Sin(t * 11f) + 0.1f * Mathf.Sin(t * 27f));
+        Curve fire = new Curve(0f, 0f, Ease.Hold).To(Impact, 2.2f);
+        for (float t = Impact + 0.5f; t < Ridge; t += 0.13f)
+            fire.To(t, 1.0f + 0.3f * Mathf.Sin(t * 11f) + 0.2f * Mathf.Sin(t * 27f));
         clip.Float(a + "Fire", typeof(Light2D), "m_Intensity", fire);
     }
 
@@ -477,14 +518,20 @@ public static class EndingBuilder
         // face falls; Tala lifts the helmet off
         string gen = a + "General";
         clip.Active(gen, (0f, false), (Crawl, true));
+
+        clip.Active(a + "Rook", (0f, true), (Two, false), (Close, true));
+        clip.Active(a + "Tala", (0f, true), (Two, false), (Close, true));
+        clip.Active(a + "Rook OTS", (0f, false), (Two, true), (Close, false));
+        clip.Sprites(a + "Rook OTS", new SpriteKeys().Cycle(Two, Lower, 0.16f, RookIdle).Set(Lower, RookLowered));
+        clip.Move(a + "Rook OTS", Curve.Constant(-0.1f), Bob(new Curve(0f, -1.75f, Ease.Hold), -1.75f, Two, Close, 1.1f, 0.1f));
         clip.Sprites(gen, new SpriteKeys()
             .Set(0f, ArtSprite("general_crawl"))
             .Set(Kneel, ArtSprite("general_kneel"))
-            .Cycle(Gen01, Gen01 + 4f, 0.13f, ArtSprite("general_kneel_talk"), ArtSprite("general_kneel"))
-            .Set(Gen01 + 4f, ArtSprite("general_kneel"))
+            .Cycle(Gen01, Gen01 + 4.6f, 0.13f, ArtSprite("general_kneel_talk"), ArtSprite("general_kneel"))
+            .Set(Gen01 + 4.6f, ArtSprite("general_kneel"))
             .Set(Gen02 - 0.4f, ArtSprite("general_kneel_sad"))
-            .Cycle(Gen02, Gen02 + 3.6f, 0.15f, ArtSprite("general_kneel_sad_talk"), ArtSprite("general_kneel_sad"))
-            .Set(Gen02 + 3.6f, ArtSprite("general_kneel_sad")));
+            .Cycle(Gen02, Gen02 + 3.3f, 0.15f, ArtSprite("general_kneel_sad_talk"), ArtSprite("general_kneel_sad"))
+            .Set(Gen02 + 3.3f, ArtSprite("general_kneel_sad")));
         float crawlY = Ground + 12f / 16f;
         Curve genY = new Curve(0f, crawlY, Ease.Hold).To(Kneel, KneelAt.y);
         Bob(genY, KneelAt.y, Kneel + 0.4f, Gen02, 1.1f);
@@ -620,6 +667,7 @@ public static class EndingBuilder
             (Lower, Sound("sfx_gun_lower"), 0.5f),
             (Lift, Sound("sfx_helmet"), 0.5f));
         AddAudio(timeline, "SFX 3",
+            (Two, Sound("sfx_aim"), 0.7f),
             (Caption, Sound("sfx_type_1"), 0.45f),
             (Caption + 1.2f, Sound("sfx_type_2"), 0.45f),
             (LionIn, LoadAudio("Assets/Cutscenes/AfterStage1/Audio/sfx_lion_walk.wav"), 0.4f),

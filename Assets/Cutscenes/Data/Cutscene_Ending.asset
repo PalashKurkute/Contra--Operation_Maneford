@@ -16,10 +16,10 @@ MonoBehaviour:
   volume: 1
   subtitles:
   - start: 13.4
-    end: 17.5
+    end: 18.1
     speaker: GENERAL
     speakerColor: {r: 1, g: 0.82, b: 0.25, a: 1}
-    text: Go on, then. Finish it.
+    text: Go on, then. The King... is ready.
   - start: 18.4
     end: 20.3
     speaker: ROOK
@@ -34,7 +34,7 @@ MonoBehaviour:
     end: 30.1
     speaker: GENERAL
     speakerColor: {r: 1, g: 0.82, b: 0.25, a: 1}
-    text: They were the only ones... who ever bowed.
+    text: They were the only subjects... who ever bowed.
   - start: 33.6
     end: 35.8
     speaker: TALA
