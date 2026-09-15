@@ -52,6 +52,10 @@ public class PlayerMovement : MonoBehaviour
     private bool isDropping;
     private bool isProne;
 
+    // Resizing the hitbox drops its contacts until the next
+    // physics step, so the ground check waits for that step
+    private bool hitboxResized;
+
     // Set when the stage is cleared: the player stops obeying keys
     private bool controlsLocked;
 
@@ -85,10 +89,17 @@ public class PlayerMovement : MonoBehaviour
         bool wasGrounded = isGrounded;
 
         // Ground check (re-evaluated every frame, so walking
-        // off a ledge clears it)
-        isGrounded = !isDropping &&
-            body.linearVelocity.y <= 0.1f &&
-            body.IsTouching(groundFilter);
+        // off a ledge clears it). Right after kneeling or
+        // standing up the hitbox has no contacts yet, so keep
+        // the last answer: otherwise kneeling reads as leaving
+        // the ground, the player pops back to full height, and
+        // bullets hit them anyway
+        if (!hitboxResized)
+        {
+            isGrounded = !isDropping &&
+                body.linearVelocity.y <= 0.1f &&
+                body.IsTouching(groundFilter);
+        }
 
         // Landing puff
         if (isGrounded && !wasGrounded)
@@ -184,6 +195,10 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        // The physics step after this one gives the resized
+        // hitbox its contacts again
+        hitboxResized = false;
+
         if (isDropping)
             return;
 
@@ -275,6 +290,7 @@ public class PlayerMovement : MonoBehaviour
             return;
 
         isProne = prone;
+        hitboxResized = true;
 
         if (prone)
         {
