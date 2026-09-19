@@ -25,6 +25,17 @@ public class BossShockwave : MonoBehaviour
         {
             spriteRenderer.flipX = direction < 0f;
         }
+
+        // The hitbox covers the wave's solid front, not the hollow
+        // curl behind it
+        BoxCollider2D hitbox = GetComponent<BoxCollider2D>();
+
+        if (hitbox != null)
+        {
+            Vector2 offset = hitbox.offset;
+            offset.x = Mathf.Abs(offset.x) * direction;
+            hitbox.offset = offset;
+        }
     }
 
     void Start()
@@ -50,12 +61,6 @@ public class BossShockwave : MonoBehaviour
         if (!other.CompareTag("Player"))
             return;
 
-        GameOverManager gameOverManager =
-            FindAnyObjectByType<GameOverManager>();
-
-        if (gameOverManager != null)
-        {
-            gameOverManager.GameOver();
-        }
+        PlayerHits.Hurt();
     }
 }

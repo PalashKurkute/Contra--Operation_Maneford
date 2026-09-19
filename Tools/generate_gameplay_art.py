@@ -219,6 +219,19 @@ def shockwave():
     return Image.fromarray(px, "RGBA")
 
 
+def life_medal():
+    """One of the player's hits in the boss fight, shown top-left like
+    Contra's life medals."""
+    img, d = canvas(11, 16)
+    d.polygon([(2, 1), (4, 1), (5, 6), (3, 6)], fill=rgb("#2d6cdf"))
+    d.polygon([(6, 1), (8, 1), (7, 6), (5, 6)], fill=rgb("#d0301f"))
+    d.ellipse((1, 6, 9, 14), fill=GOLD)
+    d.ellipse((3, 8, 7, 12), fill=GOLD_DARK)
+    d.point((4, 9), fill=rgb("#fff2a0"))
+    d.point((3, 7), fill=rgb("#fff2a0"))
+    return outline(img)
+
+
 # =========================
 # HELICOPTER CHASE
 # =========================
@@ -314,6 +327,7 @@ def main():
     save(armor_plate(), "BossFight", "Art", "ArmorPlate.png")
     save(missile(), "BossFight", "Art", "Missile.png")
     save(shockwave(), "BossFight", "Art", "Shockwave.png")
+    save(life_medal(), "BossFight", "Art", "LifeMedal.png")
 
     for f in (0, 1):
         save(helicopter(rgb("#4f6b3a"), rgb("#2f4020"), rgb("#e8e8e8"), True, f),

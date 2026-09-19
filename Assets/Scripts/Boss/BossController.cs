@@ -12,6 +12,12 @@ using System.Collections.Generic;
 // At half health the armour blows off and it gets faster. When it dies:
 // explosions, a one-second freeze, the defeat line, then STAGE CLEAR.
 //
+// Touching the boss costs the player a hit (PlayerHits), but only its
+// hurtboxes count: smaller trigger boxes on the hull and the face. The
+// solid colliders are just for bullets; the player passes through
+// them. Standing under the chin is safe, except when the boss lands:
+// the landing crushes its whole footprint for a moment.
+//
 // The sprites face left. The root sits at the boss's feet.
 [RequireComponent(typeof(BossHealth))]
 [RequireComponent(typeof(Rigidbody2D))]
@@ -42,6 +48,14 @@ public class BossController : MonoBehaviour
     public Transform missileMouth;
     public BossHealthBar healthBar;
 
+    [Header("Hurtboxes")]
+    // Always on: the hull and the face
+    public Collider2D[] hurtboxes;
+
+    // Only on for a moment as it lands: everything under it
+    public Collider2D landingHurtbox;
+    public float landingCrushTime = 0.15f;
+
     [Header("Arena")]
     // How far left and right the boss's feet may go
     public float leftX = 45.5f;
@@ -58,39 +72,53 @@ public class BossController : MonoBehaviour
     public Sprite armorSprite;
 
     [Header("Pounce")]
-    public float crouchTime = 0.7f;
-    public float pounceTime = 0.9f;
-    public float pounceHeight = 4.5f;
+    public float crouchTime = 0.9f;
+    public float pounceTime = 1.1f;
+    public float pounceHeight = 5f;
 
     [Header("Missiles")]
+    // How long the mane flashes before they fly
+    public float missileWarning = 0.7f;
     public int missiles = 3;
     public int missilesPhaseTwo = 5;
     public float missileSpread = 40f;
-    public float missileSpeed = 7f;
+    public float missileSpeed = 6f;
 
     [Header("Charge")]
-    public float chargeWarning = 1f;
-    public float chargeTime = 1.3f;
+    public float chargeWarning = 1.2f;
+    public float chargeTime = 1.4f;
     public float chargeHeight = 6.5f;
 
     [Header("Shockwave")]
-    public float shockwaveSpeed = 8f;
+    public float shockwaveSpeed = 6.5f;
 
-    // Half the boss's width, where shockwaves start
+    // A beat after landing before the shockwaves roll out
+    public float shockwaveDelay = 0.25f;
+
+    // Phase one pounces land without them; the first charge (and Pip's
+    // "Jump the shockwave!") introduces them
+    public bool pounceShockwavesPhaseOne = false;
+
+    // Half the boss's width: the back shockwave starts here
     public float halfWidth = 2.5f;
+
+    // How far the head reaches in front of the feet: the front
+    // shockwave starts beyond it
+    public float headReach = 4.9f;
 
     [Header("Pacing")]
     // Rest between attacks
-    public float restTime = 1.4f;
+    public float restTime = 1.8f;
 
     // Phase two runs this much faster
-    public float phaseTwoSpeed = 1.3f;
+    public float phaseTwoSpeed = 1.15f;
 
     public State CurrentState { get; private set; }
 
     private BossHealth health;
     private Rigidbody2D body;
     private Transform player;
+    private Collider2D playerHitbox;
     private CameraFollow cameraFollow;
 
     private Vector3 visualScale;
@@ -128,6 +156,26 @@ public class BossController : MonoBehaviour
         if (playerObject != null)
         {
             player = playerObject.transform;
+            playerHitbox = playerObject.GetComponent<Collider2D>();
+        }
+
+        // The player passes through the solid parts (bullets still hit
+        // them), so the boss can't shove or pin them; the hurtboxes
+        // decide what hurts
+        if (playerHitbox != null)
+        {
+            foreach (Collider2D part in GetComponentsInChildren<Collider2D>(true))
+            {
+                if (!part.isTrigger)
+                {
+                    Physics2D.IgnoreCollision(part, playerHitbox);
+                }
+            }
+        }
+
+        if (landingHurtbox != null)
+        {
+            landingHurtbox.enabled = false;
         }
 
         cameraFollow = FindAnyObjectByType<CameraFollow>();
@@ -247,7 +295,7 @@ public class BossController : MonoBehaviour
         Sfx.Play("whoosh", 1.2f, 0.6f);
 
         yield return Leap(targetX, pounceTime / Speed, pounceHeight);
-        yield return Land(1f);
+        yield return Land(1f, pounceShockwavesPhaseOne || CurrentState == State.Phase2);
     }
 
     IEnumerator Missiles()
@@ -264,7 +312,7 @@ public class BossController : MonoBehaviour
 
         // The tell: the mane flashes
         head.sprite = headRoar;
-        yield return Telegraph(0.5f / Speed, false);
+        yield return Telegraph(missileWarning / Speed, false);
 
         int count = CurrentState == State.Phase2 ? missilesPhaseTwo : missiles;
         float spread = CurrentState == State.Phase2 ? missileSpread * 1.4f : missileSpread;
@@ -327,7 +375,7 @@ public class BossController : MonoBehaviour
         Sfx.Play("growl", 0.7f);
 
         yield return Leap(targetX, chargeTime / Speed, chargeHeight);
-        yield return Land(1.4f);
+        yield return Land(1.4f, true);
 
         head.sprite = headNormal;
     }
@@ -389,12 +437,8 @@ public class BossController : MonoBehaviour
         head.sprite = headRoar;
         visual.localScale = visualScale;
 
-        // It can't hurt anyone any more
-        foreach (Collider2D part in GetComponentsInChildren<Collider2D>())
-        {
-            part.gameObject.tag = "Untagged";
-        }
-
+        // It can't hurt anyone any more (FixedUpdate stops checking the
+        // hurtboxes once it's dead)
         foreach (BossMissile missile in FindObjectsByType<BossMissile>())
         {
             Destroy(missile.gameObject);
@@ -498,7 +542,7 @@ public class BossController : MonoBehaviour
         body.MovePosition(to);
     }
 
-    IEnumerator Land(float strength)
+    IEnumerator Land(float strength, bool shockwaves)
     {
         Sfx.Play("thud");
         Shake(0.35f * strength, 0.4f);
@@ -508,22 +552,47 @@ public class BossController : MonoBehaviour
         Effects.Dust(feet + Vector3.left * halfWidth);
         Effects.Dust(feet + Vector3.right * halfWidth);
 
-        // Shockwaves roll out both ways
-        SpawnShockwave(feet + Vector3.left * halfWidth, -1f, shockwaveSpeed * strength);
-        SpawnShockwave(feet + Vector3.right * halfWidth, 1f, shockwaveSpeed * strength);
-
-        // Squash on impact
+        // Squash on impact, crushing whatever is under it
         visual.localScale = Vector3.Scale(visualScale, new Vector3(1.05f, 0.8f, 1f));
 
-        yield return new WaitForSeconds(0.15f);
+        if (landingHurtbox != null)
+        {
+            landingHurtbox.enabled = true;
+        }
+
+        yield return new WaitForSeconds(landingCrushTime);
+
+        if (landingHurtbox != null)
+        {
+            landingHurtbox.enabled = false;
+        }
 
         visual.localScale = visualScale;
+
+        if (shockwaves)
+        {
+            // A beat to react, then shockwaves roll out both ways: from
+            // the back feet, and from just past the snout
+            yield return new WaitForSeconds(shockwaveDelay);
+
+            float front = Facing();
+
+            SpawnShockwave(feet + Vector3.right * front * headReach, front, shockwaveSpeed * strength);
+            SpawnShockwave(feet - Vector3.right * front * halfWidth, -front, shockwaveSpeed * strength);
+        }
 
         FacePlayer();
     }
 
     void SpawnShockwave(Vector3 position, float direction, float speed)
     {
+        // Not right at the arena's edge: it would vanish at once, and
+        // the player could be pinned against it
+        if (position.x - arenaLeft < 1f || arenaRight - position.x < 1f)
+            return;
+
+        Effects.Dust(position);
+
         BossShockwave wave = Instantiate(shockwavePrefab, position, Quaternion.identity);
         wave.Launch(direction, speed * Speed, arenaLeft, arenaRight);
     }
@@ -555,10 +624,11 @@ public class BossController : MonoBehaviour
 
     IEnumerator Rest(float seconds)
     {
-        FacePlayer();
-
         for (float t = 0f; t < seconds; t += Time.deltaTime)
         {
+            // Turns round as soon as the player is back on the ground
+            FacePlayer();
+
             // Breathing
             float breath = Mathf.Sin(t * 4f) * 0.02f;
             visual.localScale = Vector3.Scale(visualScale, new Vector3(1f, 1f + breath, 1f));
@@ -602,6 +672,36 @@ public class BossController : MonoBehaviour
     // HELPERS
     // =========================
 
+    // Touching a hurtbox costs a hit (PlayerHits makes the player
+    // blink, so this doesn't take one every step)
+    void FixedUpdate()
+    {
+        if (CurrentState == State.Dead || playerHitbox == null)
+            return;
+
+        if (Touching(landingHurtbox))
+        {
+            PlayerHits.Hurt();
+            return;
+        }
+
+        foreach (Collider2D hurtbox in hurtboxes)
+        {
+            if (Touching(hurtbox))
+            {
+                PlayerHits.Hurt();
+                return;
+            }
+        }
+    }
+
+    bool Touching(Collider2D hurtbox)
+    {
+        return hurtbox != null &&
+            hurtbox.isActiveAndEnabled &&
+            Physics2D.Distance(hurtbox, playerHitbox).isOverlapped;
+    }
+
     void Update()
     {
         if (telegraphing || CurrentState == State.Dead || parts == null)
@@ -629,13 +729,23 @@ public class BossController : MonoBehaviour
 
     void FacePlayer()
     {
-        if (player != null)
-        {
-            Face(player.position.x < body.position.x ? -1f : 1f);
-        }
+        if (player == null)
+            return;
+
+        // Not while the player is in the air: the head would swing
+        // round into them mid-jump (say, over a shockwave behind it)
+        if (playerHitbox != null && playerHitbox.bounds.min.y > groundY + 0.3f)
+            return;
+
+        Face(player.position.x < body.position.x ? -1f : 1f);
     }
 
     // -1 = facing left (as drawn), 1 = facing right (mirrored)
+    float Facing()
+    {
+        return transform.localScale.x > 0f ? -1f : 1f;
+    }
+
     void Face(float direction)
     {
         Vector3 scale = transform.localScale;

@@ -272,17 +272,20 @@ Format: `SPEAKER (emotion): "text"` with optional inline commands.
 - A flat side-view arena using existing forest assets. Fixed camera with barriers at both ends. The player uses the existing movement and shooting.
 - The boss is built from separate GameObjects: body, head/mane, and a cockpit visual for the General. Use placeholder sprites until art exists.
 - A boss health bar at the top. Values are tunable fields in the Inspector.
+- Unlike the stages, the player can take 3 hits here, shown as medals top-left. After a hit the player blinks and can't be hurt for 1.6 s. The 3rd hit is game over.
+- Only the boss's hurtboxes hurt: trigger boxes on the hull and the face, smaller than the art. The player passes through the boss's solid colliders, which are only for bullets. Standing under the chin is safe, except at the moment it lands.
 
 **Phase 1 - "Roaring tank" (100% to 50%)**
-- Pounce: a 0.7 s crouch telegraph, then a jump landing on the player's position. A shockwave on landing that must be jumped over.
-- Mane missile spread: 3 to 5 projectiles in a fan, about a 3 s cooldown.
+- Pounce: a 0.9 s crouch telegraph, then a jump landing on the player's position. The landing crushes everything under it; dodge by running under the jump. No shockwaves yet.
+- Mane missile spread: 3 projectiles in a fan after a 0.7 s mane flash. Crouch under them at mid range; up close they come down too steeply.
 - Pick attacks at random, never the same one more than twice in a row.
 
 **Phase 2 - "The mane is on fire" (50% to 0%)**
 - At 50% health: a brief screen shake, armor pieces fly off, sparks, and the Phase 2 overlay line.
-- About 30% faster with shorter cooldowns.
-- New attack: a charge across the arena with a 1 s flashing telegraph.
-- Keeps the pounce and the missile spread (more projectiles).
+- About 15% faster with shorter cooldowns.
+- New attack: a charge across the arena with a 1.2 s flashing telegraph.
+- Landings now send shockwaves both ways, 0.4 s after impact: one from the back feet, one from past the snout. Jump them.
+- Keeps the pounce and the missile spread (5 projectiles).
 
 **Defeat:** explosion effect, a 1 s freeze, the defeat line, then load `Cutscene_HelicopterEscape`.
 

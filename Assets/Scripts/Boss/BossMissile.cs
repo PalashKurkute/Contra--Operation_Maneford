@@ -47,13 +47,9 @@ public class BossMissile : MonoBehaviour
         if (!other.CompareTag("Player"))
             return;
 
-        GameOverManager gameOverManager =
-            FindAnyObjectByType<GameOverManager>();
-
-        if (gameOverManager != null)
-        {
-            gameOverManager.GameOver();
-        }
+        // Still blinking from a hit: it flies on
+        if (!PlayerHits.Hurt())
+            return;
 
         Explode();
     }
