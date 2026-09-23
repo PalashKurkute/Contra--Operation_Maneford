@@ -63,3 +63,7 @@ crashlytics-build.properties
 
 # Python caches from the Tools scripts
 __pycache__/
+
+# Raw portrait downloads (big); Tools/import_portraits.py turns them into Assets/Dialogue/Portraits
+Art/PortraitsRaw/*
+!Art/PortraitsRaw/.gitkeep
