@@ -510,13 +510,28 @@ public static class CutsceneBuildKit
         asset.searchHierarchy = false;
     }
 
+    // Clips that overlap on one track crossfade, which fades in the
+    // later clip's start (a voice line's first words), so a clip that
+    // starts before the previous one's tail ends goes on its own track
     public static void AddAudio(TimelineAsset timeline, string name,
         params (double start, AudioClip clip, float volume)[] clips)
     {
-        AudioTrack track = timeline.CreateTrack<AudioTrack>(null, name);
+        var lanes = new List<(AudioTrack track, double end)>();
 
-        foreach (var entry in clips)
+        foreach (var entry in clips.OrderBy(e => e.start))
         {
+            int lane = lanes.FindIndex(l => l.end <= entry.start);
+
+            if (lane < 0)
+            {
+                string trackName = lanes.Count == 0 ? name : name + " (" + (lanes.Count + 1) + ")";
+                lanes.Add((timeline.CreateTrack<AudioTrack>(null, trackName), 0));
+                lane = lanes.Count - 1;
+            }
+
+            AudioTrack track = lanes[lane].track;
+            lanes[lane] = (track, entry.start + entry.clip.length);
+
             TimelineClip c = track.CreateClip(entry.clip);
             c.start = entry.start;
             c.displayName = entry.clip.name;
@@ -542,6 +557,11 @@ public static class CutsceneBuildKit
 
         RecorderSettings settings = Object.Instantiate(template);
         settings.name = output + " master";
+
+        // The copy comes out at 30 fps uncapped, so set the intro's rate
+        settings.FrameRatePlayback = template.FrameRatePlayback;
+        settings.FrameRate = template.FrameRate;
+        settings.CapFrameRate = template.CapFrameRate;
 
         SerializedObject so = new SerializedObject(settings);
         so.FindProperty("fileNameGenerator.m_FileName").stringValue = output + "_master";
