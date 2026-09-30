@@ -1,6 +1,6 @@
-# CONTRA (working title) - Story, Dialogue & Game Structure (v2)
+# OPERATION MANEFORD - Story, Dialogue & Game Structure (v2)
 
-Working subtitle: **KING OF THE FOREST**
+Title: **OPERATION MANEFORD** (a Contra-style run-and-gun; renamed from the working title "King of the Forest")
 
 > **Instructions for Claude (read first)**
 > This file is the single source of truth for the story, characters, dialogue, and stage flow. When the user asks for story changes, edit this file first, then update the Unity project to match.
@@ -143,7 +143,7 @@ Played with the `VideoPlayer` on a full-screen `RawImage`/`RenderTexture`. Skipp
 
 | ID | Planned content | Voiceover / on-screen text |
 |---|---|---|
-| `Cutscene_Intro` | Aerial shot of the forest at dusk, quiet. A distant roar. A chained gate. A parachute opens. Title card: KING OF THE FOREST. | PIP (voiceover): "Day nine. The Maneford Reserve stopped answering our calls. We sent drones. They came back with... questions. So now we're sending Rook." |
+| `Cutscene_Intro` | Aerial shot of the forest at dusk, quiet. A distant roar. A chained gate. A parachute opens. Title card: OPERATION MANEFORD. | PIP (voiceover): "Day nine. The Maneford Reserve stopped answering our calls. We sent drones. They came back with... questions. So now we're sending Rook." |
 | `Cutscene_AfterStage1` | The last collar in the pack shatters. The freed lion shakes its head, looks back at Rook for a beat, then runs into the forest. In the distance, searchlights sweep over a fenced military base with a giant banner of the General's face. *As made (24.4 s):* a forest clearing at blue hour, close on the sparking collar; it breaks; a two-shot as the lion looks back at Rook and runs off; a far roar as searchlights rise over the hills. Night: the compound seen from the forest edge with Rook in silhouette (caption ROYAL MANEFORD COMPOUND / DAY 9 - 21:40); a push in on the banner while he speaks; the alarm, the gate rolls open and the soldiers march out towards the forest; hard cut to black. | GEN (voice from a speaker): "He freed my lions? Fine. Release the soldiers." |
 | `Cutscene_AfterStage2` | A control room full of monitors showing Rook beating the soldiers. The General sips tea, spills it, and presses a big red button labeled "DO NOT PRESS (ROYAL)." A hangar door opens and the Mecha-Lion's glowing eyes light up. In the background, Dobbs raises his hand. | GEN: "Wake the Mecha-Lion." / DOBBS: "Sir, about the fuel gauge..." / GEN: "Not now, Dobbs!" |
 | `Cutscene_HelicopterEscape` | The Mecha-Lion collapses and explodes. The General climbs out of the wreckage with singed hair and his helmet askew, runs for a helicopter, and lifts off. A second helicopter (unlocked, no pilot) sits nearby. Rook and Tala run to it. | GEN: "This is not over! The King will return! {pause} After a short break!" |

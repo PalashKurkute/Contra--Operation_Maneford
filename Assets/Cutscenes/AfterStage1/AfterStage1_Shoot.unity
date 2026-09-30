@@ -11905,7 +11905,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: KING OF THE FOREST
+  m_text: OPERATION MANEFORD
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9c4788e386803d3498c07f7d0326f20e, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 176b7a690ed41994ab852d3a9db496d3, type: 2}

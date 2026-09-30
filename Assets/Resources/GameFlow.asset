@@ -23,7 +23,7 @@ MonoBehaviour:
     level: 0
     summary: 'The forest at dusk. A distant roar, a chained gate, a parachute opening.
       Pip: "Day nine. The Maneford Reserve stopped answering our calls... So now
-      we''re sending Rook." Title card: KING OF THE FOREST.'
+      we''re sending Rook." Title card: OPERATION MANEFORD.'
   - sceneName: Dialogue_Landing
     type: 1
     level: 1

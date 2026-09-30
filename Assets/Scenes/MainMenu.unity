@@ -5478,7 +5478,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 160}
+  m_AnchoredPosition: {x: 0, y: 410}
   m_SizeDelta: {x: 1800, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &542950791
@@ -5501,7 +5501,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: KING OF THE FOREST
+  m_text: OPERATION
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9c4788e386803d3498c07f7d0326f20e, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 176b7a690ed41994ab852d3a9db496d3, type: 2}
@@ -5538,7 +5538,7 @@ MonoBehaviour:
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 0
+  m_characterSpacing: 40
   m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -6688,7 +6688,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 300}
+  m_AnchoredPosition: {x: 0, y: 270}
   m_SizeDelta: {x: 1800, y: 180}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1322639233
@@ -6711,7 +6711,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: CONTRA
+  m_text: MANEFORD
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9c4788e386803d3498c07f7d0326f20e, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 176b7a690ed41994ab852d3a9db496d3, type: 2}

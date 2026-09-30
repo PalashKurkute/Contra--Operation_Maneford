@@ -34,7 +34,7 @@ SHOTS = {
     "sky": 13.9,      # cut to the sky, the plane and the parachute
     "chute": 15.3,    # the parachute opens
     "cut": 18.6,      # hard cut to black and silence
-    "title": 19.1,    # KING OF THE FOREST slams in
+    "title": 19.1,    # OPERATION MANEFORD slams in
 }
 
 
