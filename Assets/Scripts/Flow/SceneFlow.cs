@@ -5,8 +5,9 @@ using System.Collections;
 using TMPro;
 
 // Moves the game from scene to scene in the order set by the
-// GameFlow asset. Fades through black between scenes and shows a
-// "LEVEL n" card whenever a new level begins.
+// GameFlow asset. Letterbox bars close over the old scene and open
+// on the new one (the sound fades with them), with a "LEVEL n" card
+// on the black whenever a new level begins.
 //
 // It creates itself (from Resources/SceneFlow) before the first
 // scene loads, so every scene can call SceneFlow.Next(), even
@@ -18,19 +19,28 @@ public class SceneFlow : MonoBehaviour
     public GameFlow flow;
 
     [Header("Screen")]
-    public CanvasGroup fade;
+    public RectTransform shutterTop;
+    public RectTransform shutterBottom;
     public CanvasGroup levelCard;
     public TMP_Text levelNumberText;
+    public RectTransform levelLine;
     public TMP_Text levelTitleText;
 
     [Header("Timing")]
-    public float fadeTime = 0.4f;
+    public float closeTime = 0.45f;
+    public float blackTime = 0.15f;
+    public float openTime = 0.6f;
     public float levelCardTime = 2.5f;
 
     // Highest level reached, which unlocks it in the menu
     const string LevelReachedKey = "LevelReached";
 
     private bool transitioning;
+
+    // 0 = bars open, 1 = closed (black screen)
+    private float shut;
+
+    private Vector2 numberPosition;
 
     // =========================
     // STARTUP
@@ -62,7 +72,9 @@ public class SceneFlow : MonoBehaviour
 
     void Start()
     {
-        // Fade into whichever scene the game started in, with its
+        numberPosition = levelNumberText.rectTransform.anchoredPosition;
+
+        // Open on whichever scene the game started in, with its
         // level card if that scene is where its level begins
         int index = CurrentIndex();
         int level = flow.LevelOf(index);
@@ -71,6 +83,12 @@ public class SceneFlow : MonoBehaviour
             index == flow.FirstStepOfLevel(level);
 
         StartCoroutine(Reveal(level, showCard));
+    }
+
+    // Don't leave the game muted if it stops mid-transition
+    void OnDestroy()
+    {
+        AudioListener.volume = 1f;
     }
 
     void Update()
@@ -91,7 +109,7 @@ public class SceneFlow : MonoBehaviour
     // PUBLIC API
     // =========================
 
-    // True while the screen fades or shows a level card.
+    // True while the bars move or a level card shows.
     // Scenes should ignore input until it is over.
     public static bool IsTransitioning
     {
@@ -261,7 +279,14 @@ public class SceneFlow : MonoBehaviour
 
         int fromLevel = CurrentLevel;
 
-        yield return FadeGroup(fade, 1f);
+        float startShut = shut;
+        float startVolume = AudioListener.volume;
+
+        yield return Animate(closeTime, t =>
+        {
+            SetShutter(Mathf.Lerp(startShut, 1f, t));
+            AudioListener.volume = Mathf.Lerp(startVolume, 0f, t);
+        });
 
         yield return SceneManager.LoadSceneAsync(sceneName);
 
@@ -272,12 +297,15 @@ public class SceneFlow : MonoBehaviour
         yield return Reveal(level, level > 0 && level != fromLevel);
     }
 
-    // Starts from a black screen, shows the level card if
-    // asked, then fades the scene in
+    // Starts from a black, silent screen, shows the level card if
+    // asked, then opens the bars on the scene
     IEnumerator Reveal(int level, bool showCard)
     {
         transitioning = true;
-        fade.alpha = 1f;
+        SetShutter(1f);
+        AudioListener.volume = 0f;
+
+        yield return new WaitForSecondsRealtime(blackTime);
 
         if (showCard)
         {
@@ -290,41 +318,113 @@ public class SceneFlow : MonoBehaviour
                 PlayerPrefs.Save();
             }
 
-            levelNumberText.text = "LEVEL " + level;
-            levelTitleText.text = flow.LevelTitle(level);
+            // The level's music comes up under the card
+            AudioListener.volume = 1f;
 
-            Sfx.Play("level_start");
-
-            yield return FadeGroup(levelCard, 1f);
-
-            yield return new WaitForSecondsRealtime(levelCardTime);
-
-            yield return FadeGroup(levelCard, 0f);
+            yield return LevelCard(level);
         }
 
         Time.timeScale = 1f;
 
-        yield return FadeGroup(fade, 0f);
+        float startVolume = AudioListener.volume;
+
+        yield return Animate(openTime, t =>
+        {
+            SetShutter(1f - t);
+            AudioListener.volume = Mathf.Lerp(startVolume, 1f, t);
+        });
 
         transitioning = false;
     }
 
-    // Fades in real time, so it works while the game is paused
-    IEnumerator FadeGroup(CanvasGroup group, float target)
+    // The gold line draws out from the middle, "LEVEL n" rises
+    // above it, the title types on below, then it all fades
+    IEnumerator LevelCard(int level)
     {
-        float start = group.alpha;
+        levelNumberText.text = "LEVEL " + level;
+        levelTitleText.text = flow.LevelTitle(level);
+
+        RectTransform number = levelNumberText.rectTransform;
+
+        levelLine.localScale = new Vector3(0f, 1f, 1f);
+        levelNumberText.alpha = 0f;
+        levelTitleText.maxVisibleCharacters = 0;
+        levelCard.alpha = 1f;
+
+        Sfx.Play("level_start");
+
+        float shown = 0f;
+
+        yield return Animate(0.3f, t =>
+            levelLine.localScale = new Vector3(t, 1f, 1f));
+
+        yield return Animate(0.3f, t =>
+        {
+            levelNumberText.alpha = t;
+            number.anchoredPosition = numberPosition + Vector2.down * 24f * (1f - t);
+        });
+
+        shown += 0.6f;
+
+        int letters = levelTitleText.text.Length;
+
+        for (int i = 1; i <= letters; i++)
+        {
+            levelTitleText.maxVisibleCharacters = i;
+
+            if (levelTitleText.text[i - 1] != ' ')
+                Sfx.Play("blip", 2f, 0.4f);
+
+            yield return new WaitForSecondsRealtime(0.05f);
+        }
+
+        shown += letters * 0.05f;
+
+        yield return new WaitForSecondsRealtime(Mathf.Max(0.5f, levelCardTime - shown));
+
+        yield return Animate(0.3f, t => levelCard.alpha = 1f - t);
+
+        levelTitleText.maxVisibleCharacters = 99999;
+    }
+
+    // Each bar covers just over half the screen when shut, so
+    // they overlap with no seam
+    void SetShutter(float amount)
+    {
+        shut = amount;
+
+        float height = amount * 0.505f;
+
+        shutterTop.anchorMin = new Vector2(0f, 1f - height);
+        shutterBottom.anchorMax = new Vector2(1f, height);
+    }
+
+    // Runs step(t) with t eased from 0 to 1 over the duration, in
+    // real time, so it works while the game is paused
+    IEnumerator Animate(float duration, System.Action<float> step)
+    {
         float time = 0f;
 
-        while (time < fadeTime)
+        while (time < duration)
         {
-            // Cap the step so a loading hitch doesn't skip the fade
+            // Cap the step so a loading hitch doesn't skip it
             time += Mathf.Min(Time.unscaledDeltaTime, 1f / 30f);
 
-            group.alpha = Mathf.Lerp(start, target, time / fadeTime);
+            step(Ease(time / duration));
 
             yield return null;
         }
 
-        group.alpha = target;
+        step(1f);
+    }
+
+    // Cubic ease in and out
+    static float Ease(float t)
+    {
+        t = Mathf.Clamp01(t);
+
+        return t < 0.5f
+            ? 4f * t * t * t
+            : 1f - Mathf.Pow(-2f * t + 2f, 3f) / 2f;
     }
 }

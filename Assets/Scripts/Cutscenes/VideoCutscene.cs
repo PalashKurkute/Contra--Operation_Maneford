@@ -313,14 +313,14 @@ public class VideoCutscene : MonoBehaviour
         SceneFlow.Next();
     }
 
-    // Fades the sound along with SceneFlow's fade to black,
-    // so a skip doesn't cut the audio off mid-word
+    // Fades the sound as SceneFlow's bars close, so a skip
+    // doesn't cut the audio off mid-word
     IEnumerator FadeOutAudio()
     {
         float start = audioSource.volume;
         float time = 0f;
         float length = SceneFlow.Instance != null ?
-            SceneFlow.Instance.fadeTime : 0.4f;
+            SceneFlow.Instance.closeTime : 0.4f;
 
         while (time < length)
         {

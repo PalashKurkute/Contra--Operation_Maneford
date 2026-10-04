@@ -15,5 +15,8 @@ public class CutsceneShoot : MonoBehaviour
         // F9 skip don't belong in the recording
         if (SceneFlow.Instance != null)
             SceneFlow.Instance.gameObject.SetActive(false);
+
+        // Its transitions fade the listener; record at full volume
+        AudioListener.volume = 1f;
     }
 }
