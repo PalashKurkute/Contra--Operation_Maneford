@@ -39,7 +39,8 @@ public class Level2Enemy : MonoBehaviour, IDamageable
 
     void Update()
     {
-        if (player == null)
+        // Hold fire once the stage is cleared
+        if (player == null || StageManager.IsCleared)
             return;
 
         float distance = Mathf.Abs(
@@ -87,12 +88,14 @@ public class Level2Enemy : MonoBehaviour, IDamageable
             body.linearVelocity.y
         );
 
+        // Always face the player, even while standing to shoot, so a
+        // player who gets behind us isn't shot out of our back.
         // Sprite naturally faces RIGHT
-        if (direction < 0)
+        if (player.position.x < transform.position.x)
         {
             spriteRenderer.flipX = true;
         }
-        else if (direction > 0)
+        else if (player.position.x > transform.position.x)
         {
             spriteRenderer.flipX = false;
         }

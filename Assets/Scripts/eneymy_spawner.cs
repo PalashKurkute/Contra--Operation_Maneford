@@ -16,6 +16,11 @@ public class EnemySpawner : MonoBehaviour
     public int maxEnemies = 5;
     public float minimumSpawnDistance = 8f;
 
+    // Spawn points closer than this to the screen edge (or on
+    // screen) are skipped, so enemies never pop in where the
+    // player can see them
+    public float offscreenMargin = 1.5f;
+
     private float timer = 0f;
     private bool stopped = false;
 
@@ -93,7 +98,7 @@ public class EnemySpawner : MonoBehaviour
                 playerObject.transform.position
             );
 
-            if (distance >= minimumSpawnDistance)
+            if (distance >= minimumSpawnDistance && OffScreen(point.position))
             {
                 choices.Add(point);
             }
@@ -102,7 +107,7 @@ public class EnemySpawner : MonoBehaviour
         if (choices.Count == 0)
         {
             Debug.Log(
-                "⚠️ Every spawn point is too close to the player"
+                "⚠️ Every spawn point is too close to the player or on screen"
             );
 
             return;
@@ -112,11 +117,12 @@ public class EnemySpawner : MonoBehaviour
             choices[Random.Range(0, choices.Count)];
 
         // Spread a pack out so they don't stack on one spot
+        // (outwards, so none of them lands on screen)
         Vector3 position = spawnPoint.position;
 
         if (ignoreLimit)
         {
-            position.x += Random.Range(-1.2f, 1.2f);
+            position.x += Random.Range(0f, 1.2f) * SideOfScreen(position);
         }
 
         // Spawn
@@ -134,6 +140,30 @@ public class EnemySpawner : MonoBehaviour
             " at " +
             spawnPoint.name
         );
+    }
+
+    bool OffScreen(Vector3 position)
+    {
+        Camera cam = Camera.main;
+
+        if (cam == null)
+            return true;
+
+        float halfWidth = cam.orthographicSize * cam.aspect;
+
+        return Mathf.Abs(position.x - cam.transform.position.x) >=
+            halfWidth + offscreenMargin;
+    }
+
+    // -1 left of the camera, 1 right of it
+    float SideOfScreen(Vector3 position)
+    {
+        Camera cam = Camera.main;
+
+        if (cam == null)
+            return 1f;
+
+        return position.x < cam.transform.position.x ? -1f : 1f;
     }
 
     public void StopSpawning()

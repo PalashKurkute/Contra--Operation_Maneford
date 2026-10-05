@@ -276,7 +276,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   moveSpeed: 4
-  stopDistance: 1.5
+  stopDistance: 0.5
   health: 1
   collar: {fileID: 6085761756141243305}
   runSpeed: 5

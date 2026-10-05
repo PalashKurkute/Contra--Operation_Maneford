@@ -19,6 +19,19 @@ public class CameraFollow : MonoBehaviour
     void Start()
     {
         followPosition = transform.position;
+
+        // Start on the player, so the view doesn't slide across the
+        // level while the scene opens
+        if (player != null)
+        {
+            followPosition = new Vector3(
+                player.position.x,
+                fixedY,
+                transform.position.z
+            );
+
+            transform.position = followPosition;
+        }
     }
 
     // Shake the camera; a stronger shake overrides a weaker one

@@ -9,7 +9,11 @@ public class Enemy : MonoBehaviour, IDamageable
 {
     [Header("Movement")]
     public float moveSpeed = 2f;
-    public float stopDistance = 1.5f;
+
+    // Stops this close to the player. Keep it under the distance at
+    // which the two touch (about 0.65), or the lion stands next to
+    // the player and never gets them.
+    public float stopDistance = 0.5f;
     public int health = 1;
 
     [Header("Freed")]
