@@ -44,7 +44,8 @@ public class BossMissile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("Player"))
+        // Dashed through: it flies on
+        if (!other.CompareTag("Player") || PlayerMovement.IsDodging)
             return;
 
         // Still blinking from a hit: it flies on

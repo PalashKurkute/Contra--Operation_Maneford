@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -40,6 +41,21 @@ public class PlayerMovement : MonoBehaviour
     // before Down + Jump lets us drop
     public float dropCheckDistance = 10f;
 
+    // Shift: a quick sidestep. Nothing hurts the player while
+    // dashing (except falling in a pit) and they pass through
+    // enemies, so it can carry them out from under the boss.
+    [Header("Dash")]
+    public float dashSpeed = 18f;
+    public float dashTime = 0.2f;
+    public float dashCooldown = 0.6f;
+
+    // Still safe for this long after the dash ends
+    public float dashGrace = 0.1f;
+
+    // An afterimage every this many seconds
+    public float ghostEvery = 0.035f;
+    public Color ghostColor = new Color(0.45f, 0.85f, 1f, 0.6f);
+
     private Rigidbody2D body;
     private SpriteRenderer spriteRenderer;
     private Animator animator;
@@ -65,6 +81,28 @@ public class PlayerMovement : MonoBehaviour
     private Pose pose;
 
     private ContactFilter2D groundFilter;
+
+    private bool isDashing;
+    private float dashDirection;
+    private float dodgeUntil;
+    private float nextDashTime;
+
+    // Enemies we're passing through; solid again once we're clear
+    private List<Collider2D> passedThrough = new List<Collider2D>();
+
+    private static PlayerMovement instance;
+
+    // True while dashing: bullets, missiles, shockwaves and
+    // enemies can't hurt the player
+    public static bool IsDodging
+    {
+        get { return instance != null && Time.time < instance.dodgeUntil; }
+    }
+
+    void Awake()
+    {
+        instance = this;
+    }
 
     void Start()
     {
@@ -151,8 +189,10 @@ public class PlayerMovement : MonoBehaviour
             spriteRenderer.flipX = facing < 0;
         }
 
-        // Jump, or Down + Jump to drop through the platform
+        // Jump, or Down + Jump to drop through the platform (not
+        // mid-dash: the dash would cancel the jump straight away)
         if (hasControl &&
+            !isDashing &&
             Keyboard.current.spaceKey.wasPressedThisFrame &&
             isGrounded)
         {
@@ -172,6 +212,17 @@ public class PlayerMovement : MonoBehaviour
                 Effects.Dust(FeetPosition());
                 Sfx.Play("jump");
             }
+        }
+
+        // Dash: towards the held direction, else the way we face
+        if (hasControl &&
+            !isDashing &&
+            !isDropping &&
+            Time.time >= nextDashTime &&
+            (Keyboard.current.leftShiftKey.wasPressedThisFrame ||
+            Keyboard.current.rightShiftKey.wasPressedThisFrame))
+        {
+            StartCoroutine(Dash(move != 0 ? move : facing));
         }
 
         UpdateAim(move, up, down);
@@ -198,6 +249,21 @@ public class PlayerMovement : MonoBehaviour
         // The physics step after this one gives the resized
         // hitbox its contacts again
         hitboxResized = false;
+
+        if (!isDashing && passedThrough.Count > 0)
+        {
+            ReleaseClearedEnemies();
+        }
+
+        if (isDashing)
+        {
+            body.linearVelocity = new Vector2(
+                dashDirection * dashSpeed,
+                0f
+            );
+
+            return;
+        }
 
         if (isDropping)
             return;
@@ -306,6 +372,84 @@ public class PlayerMovement : MonoBehaviour
         {
             hitbox.size = standSize;
             hitbox.offset = standOffset;
+        }
+    }
+
+    // =========================
+    // DASH
+    // =========================
+
+    IEnumerator Dash(float direction)
+    {
+        isDashing = true;
+        dashDirection = direction;
+        dodgeUntil = Time.time + dashTime + dashGrace;
+        nextDashTime = Time.time + dashCooldown;
+
+        facing = direction;
+        spriteRenderer.flipX = facing < 0;
+
+        // A flat sidestep, even in mid-air
+        float gravity = body.gravityScale;
+        body.gravityScale = 0f;
+
+        PassThroughEnemies();
+
+        Effects.Dust(FeetPosition());
+        Sfx.Play("whoosh", 1.5f, 0.7f);
+
+        float ghostTimer = 0f;
+
+        for (float t = 0f; t < dashTime; t += Time.deltaTime)
+        {
+            ghostTimer -= Time.deltaTime;
+
+            if (ghostTimer <= 0f)
+            {
+                DashGhost.Spawn(spriteRenderer, ghostColor);
+                ghostTimer = ghostEvery;
+            }
+
+            yield return null;
+        }
+
+        body.gravityScale = gravity;
+        isDashing = false;
+    }
+
+    void PassThroughEnemies()
+    {
+        foreach (Collider2D other in FindObjectsByType<Collider2D>())
+        {
+            if (other.isTrigger ||
+                !other.CompareTag("Enemy") ||
+                passedThrough.Contains(other))
+                continue;
+
+            Physics2D.IgnoreCollision(hitbox, other, true);
+            passedThrough.Add(other);
+        }
+    }
+
+    // Enemies become solid again once we're no longer inside
+    // them, so the dash never ends with a touch that kills
+    void ReleaseClearedEnemies()
+    {
+        for (int i = passedThrough.Count - 1; i >= 0; i--)
+        {
+            Collider2D other = passedThrough[i];
+
+            if (other != null &&
+                Physics2D.Distance(hitbox, other).isOverlapped)
+                continue;
+
+            // A freed lion stays out of the way for good
+            if (other != null && other.CompareTag("Enemy"))
+            {
+                Physics2D.IgnoreCollision(hitbox, other, false);
+            }
+
+            passedThrough.RemoveAt(i);
         }
     }
 
@@ -456,7 +600,19 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Enemy"))
+        TouchEnemy(collision);
+    }
+
+    // Also while still touching: a lion that bumps into us during the
+    // dash's grace time gets us once the grace is over
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        TouchEnemy(collision);
+    }
+
+    void TouchEnemy(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy") && !IsDodging)
         {
             GameOverManager gameOverManager =
                 FindAnyObjectByType<GameOverManager>();

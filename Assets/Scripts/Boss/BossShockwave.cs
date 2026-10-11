@@ -58,7 +58,8 @@ public class BossShockwave : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("Player"))
+        // Dashed through
+        if (!other.CompareTag("Player") || PlayerMovement.IsDodging)
             return;
 
         PlayerHits.Hurt();

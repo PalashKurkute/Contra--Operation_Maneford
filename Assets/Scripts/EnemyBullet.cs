@@ -45,6 +45,10 @@ public class EnemyBullet : MonoBehaviour
         if (other.isTrigger || other.CompareTag("Enemy"))
             return;
 
+        // The player dashed through it: it flies on
+        if (other.CompareTag("Player") && PlayerMovement.IsDodging)
+            return;
+
         hasHit = true;
 
         Effects.Impact(transform.position);

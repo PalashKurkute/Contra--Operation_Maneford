@@ -679,6 +679,10 @@ public class BossController : MonoBehaviour
         if (CurrentState == State.Dead || playerHitbox == null)
             return;
 
+        // Dashing through it
+        if (PlayerMovement.IsDodging)
+            return;
+
         if (Touching(landingHurtbox))
         {
             PlayerHits.Hurt();

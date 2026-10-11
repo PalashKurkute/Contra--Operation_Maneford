@@ -6684,6 +6684,12 @@ MonoBehaviour:
   muzzleAirDistance: 0.12
   proneHeight: 0.2
   dropCheckDistance: 10
+  dashSpeed: 18
+  dashTime: 0.2
+  dashCooldown: 0.6
+  dashGrace: 0.1
+  ghostEvery: 0.035
+  ghostColor: {r: 0.45, g: 0.85, b: 1, a: 0.6}
 --- !u!50 &689807188
 Rigidbody2D:
   serializedVersion: 5
