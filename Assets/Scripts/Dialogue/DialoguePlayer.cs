@@ -448,16 +448,23 @@ public class DialoguePlayer : MonoBehaviour
 
             yield return null;
 
-            pauseDebt -= Time.unscaledDeltaTime;
+            // Typing stops while the game is paused
+            if (!PauseMenu.IsPaused)
+                pauseDebt -= Time.unscaledDeltaTime;
         }
     }
 
     IEnumerator Wait(float seconds)
     {
-        float end = Time.unscaledTime + seconds;
+        float time = 0f;
 
-        while (Time.unscaledTime < end && !skipping)
+        while (time < seconds && !skipping)
+        {
             yield return null;
+
+            if (!PauseMenu.IsPaused)
+                time += Time.unscaledDeltaTime;
+        }
     }
 
     IEnumerator Fade(CanvasGroup group, float target, float seconds)

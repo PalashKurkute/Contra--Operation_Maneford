@@ -68,6 +68,9 @@ public class Sfx : MonoBehaviour
             voice.playOnAwake = false;
             voice.spatialBlend = 0f;
 
+            // Still heard while the pause menu stops all other sound
+            voice.ignoreListenerPause = true;
+
             voices[i] = voice;
         }
     }

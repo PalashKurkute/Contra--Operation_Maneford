@@ -150,10 +150,11 @@ public class VideoCutscene : MonoBehaviour
     }
 
     // Unity pauses a video that starts while the window is in the
-    // background; carry on when the window gets focus back
+    // background; carry on when the window gets focus back (unless
+    // the game is paused)
     void OnApplicationFocus(bool focus)
     {
-        if (focus && usingVideo && !finished &&
+        if (focus && usingVideo && !finished && !PauseMenu.IsPaused &&
             player.isPrepared && !player.isPlaying)
             player.Play();
     }
@@ -248,7 +249,7 @@ public class VideoCutscene : MonoBehaviour
     // and a full bar skips the cutscene
     void UpdateSkip()
     {
-        if (SceneFlow.IsTransitioning)
+        if (SceneFlow.IsTransitioning || PauseMenu.IsPaused)
             return;
 
         Keyboard keyboard = Keyboard.current;
