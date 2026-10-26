@@ -1,4 +1,4 @@
-"""Generates placeholder pixel art for gameplay: the lions' collars, the
+"""Generates pixel art for gameplay: the lion and its collar, the rifle shot, the
 Mecha-Lion boss and its attacks, and the helicopter chase.
 
 Run from the repo root (after generate_portraits.py, which the
@@ -6,8 +6,8 @@ cockpit uses for the General's face):
     python Tools/generate_gameplay_art.py
 
 Writes:
-    Assets/Sprites/Lion/LionCollar.png
-    Assets/Sprites/FX/CollarHalf.png, Shard.png
+    Assets/Sprites/Lion/Lion.png, LionCollar.png
+    Assets/Sprites/FX/Bullet.png, CollarHalf.png, Shard.png
     Assets/BossFight/Art/*.png
     Assets/HelicopterStage/Art/*.png
 """
@@ -52,6 +52,151 @@ def save(img, *path):
     os.makedirs(os.path.dirname(full), exist_ok=True)
     img.save(full)
     print("art:", os.path.relpath(full, ASSETS))
+
+
+# =========================
+# LION RUN CYCLE (faces left)
+# =========================
+
+LION_FUR = rgb("#c98a40")
+LION_FUR_LIGHT = rgb("#e6b264")
+LION_FUR_DARK = rgb("#8f5726")
+LION_FAR = rgb("#7a4a22")
+LION_MUZZLE = rgb("#efd29a")
+MANE = rgb("#7c3a17")
+MANE_LIGHT = rgb("#a8552a")
+MANE_DARK = rgb("#53240c")
+LION_INK = rgb("#2a1408")
+
+# One gallop: stretched, gathering, collected, pushing off. Each leg is
+# shoulder/hip -> knee -> paw, front leg first; the near legs go over
+# the body, the far ones behind it in shadow. Paws touch row 36 (the
+# outline adds row 37), and the back of the mane stays near (29, 20),
+# where the collar overlay sits.
+LION_POSES = [
+    dict(body=(20, 21, 46, 30), mane=(22, 21), head=(13, 23),
+         tail=[(45, 23), (49, 21), (51, 17)],
+         far=[[(26, 26), (20, 30), (14, 33)], [(39, 26), (44, 31), (49, 33)]],
+         near=[[(24, 27), (16, 31), (9, 34)], [(42, 27), (46, 32), (51, 35)]]),
+    dict(body=(20, 17, 45, 27), mane=(22, 17), head=(13, 18),
+         tail=[(44, 19), (48, 15), (50, 10)],
+         far=[[(27, 24), (29, 30), (27, 36)], [(40, 24), (42, 30), (40, 35)]],
+         near=[[(25, 24), (23, 30), (20, 36)], [(42, 24), (37, 29), (33, 34)]]),
+    dict(body=(21, 16, 44, 27), mane=(23, 17), head=(14, 19),
+         tail=[(43, 18), (47, 13), (50, 12)],
+         far=[[(27, 24), (30, 30), (33, 35)], [(39, 24), (37, 30), (38, 36)]],
+         near=[[(26, 24), (27, 30), (29, 36)], [(41, 24), (35, 30), (31, 36)]]),
+    dict(body=(19, 20, 46, 29), mane=(21, 20), head=(12, 21),
+         tail=[(45, 22), (50, 20), (53, 18)],
+         far=[[(25, 25), (19, 29), (13, 31)], [(39, 26), (44, 31), (48, 35)]],
+         near=[[(23, 26), (15, 29), (8, 31)], [(41, 26), (43, 31), (46, 36)]]),
+]
+
+
+def _lion_leg(d, leg, fill, front):
+    (jx, jy), (kx, ky), (px, py) = leg
+    d.line([(jx, jy), (kx, ky)], fill=fill, width=4)
+    d.line([(kx, ky), (px, py)], fill=fill, width=3)
+    d.ellipse((jx - 3, jy - 3, jx + 3, jy + 2), fill=fill)
+    # Paw, toes forward (left)
+    d.rectangle((px - 2, py - 1, px + 1, py), fill=fill)
+
+
+def _lion_shade(img, base, light, dark):
+    """Lit from above: top edges light, bottom edges dark."""
+    px = np.array(img)
+    solid = px[:, :, 3] > 0
+    is_base = np.all(px == np.array(base), axis=2)
+    above = np.zeros_like(solid)
+    above[1:, :] = solid[:-1, :]
+    below = np.zeros_like(solid)
+    below[:-1, :] = solid[1:, :]
+    px[is_base & ~above] = light
+    px[is_base & ~below] = dark
+    return Image.fromarray(px, "RGBA")
+
+
+def _lion_mane(d, cx, cy):
+    # A shaggy disc: the radius wobbles in tufts
+    tufts = [9, 8, 10, 8, 9, 10, 8, 9, 8, 10, 9, 8]
+    points = []
+    for i in range(48):
+        a = i / 48 * 2 * math.pi
+        r = tufts[(i // 4) % len(tufts)] - (0.8 if i % 4 in (0, 3) else 0)
+        # Flatter on top, longer down the chest
+        ry = r * (0.85 if math.sin(a) < 0 else 1.05)
+        points.append((cx + r * math.cos(a), cy + ry * math.sin(a)))
+    d.polygon(points, fill=MANE)
+
+
+def _lion_mane_texture(img, cx, cy):
+    px = np.array(img)
+    is_mane = np.all(px == np.array(MANE), axis=2)
+    ys, xs = np.nonzero(is_mane)
+    for x, y in zip(xs, ys):
+        dx, dy = x - cx, y - cy
+        strand = (x * 7 + y * 13 + (x * y) % 5) % 7
+        if dx + dy > 6 or strand == 0:
+            px[y, x] = MANE_DARK
+        elif dx + dy < -5 and strand in (2, 4):
+            px[y, x] = MANE_LIGHT
+    return Image.fromarray(px, "RGBA")
+
+
+def _lion_head(d, hx, hy):
+    # Skull, ear, then a short boxy muzzle with a pale chin
+    d.ellipse((hx - 3, hy - 4, hx + 4, hy + 3), fill=LION_FUR)
+    d.ellipse((hx - 1, hy - 5, hx + 1, hy - 3), fill=LION_FUR_DARK)
+    d.rectangle((hx - 6, hy - 1, hx - 1, hy + 2), fill=LION_FUR)
+    d.rectangle((hx - 5, hy + 2, hx - 2, hy + 3), fill=LION_MUZZLE)
+    d.line([(hx - 3, hy - 3), (hx + 1, hy - 3)], fill=LION_FUR_LIGHT)
+    d.line([(hx - 6, hy - 1), (hx - 6, hy)], fill=LION_INK)
+    d.point((hx - 2, hy - 2), fill=LION_INK)
+    d.line([(hx - 5, hy + 1), (hx - 3, hy + 1)], fill=LION_FUR_DARK)
+
+
+def lion_frame(pose):
+    w, h = 56, 40
+
+    # Far legs and tail, in shadow
+    back, d = canvas(w, h)
+    for leg in pose["far"]:
+        _lion_leg(d, leg, LION_FAR, True)
+    d.line(pose["tail"], fill=LION_FUR_DARK, width=2)
+    tx, ty = pose["tail"][-1]
+    d.ellipse((tx - 2, ty - 2, tx + 1, ty + 1), fill=MANE_DARK)
+
+    # Body, then the near legs with a dark edge so they stand out
+    body, d = canvas(w, h)
+    d.ellipse(pose["body"], fill=LION_FUR)
+    body = _lion_shade(body, LION_FUR, LION_FUR_LIGHT, LION_FUR_DARK)
+
+    legs, d = canvas(w, h)
+    for leg in pose["near"]:
+        _lion_leg(d, leg, LION_FUR, True)
+    legs = _lion_shade(legs, LION_FUR, LION_FUR_LIGHT, LION_FUR_DARK)
+    legs = outline(legs, LION_FUR_DARK)
+
+    # Mane, then the face over it
+    front, d = canvas(w, h)
+    mx, my = pose["mane"]
+    _lion_mane(d, mx, my)
+    front = _lion_mane_texture(front, mx, my)
+    d = ImageDraw.Draw(front)
+    _lion_head(d, *pose["head"])
+
+    img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    for layer in (back, body, legs, front):
+        img.alpha_composite(layer)
+    return outline(img, LION_INK)
+
+
+def lion_run():
+    """Four 56x40 gallop frames side by side (Lion_0..Lion_3)."""
+    sheet = Image.new("RGBA", (56 * 4, 40), (0, 0, 0, 0))
+    for i, pose in enumerate(LION_POSES):
+        sheet.alpha_composite(lion_frame(pose), (56 * i, 0))
+    return sheet
 
 
 # =========================
@@ -315,7 +460,33 @@ def heli_bullet():
     return img
 
 
+# =========================
+# RIFLE SHOT (player and soldiers)
+# =========================
+
+def rifle_bullet():
+    # A hot round pellet: white core, amber, red rim
+    rim, amber, core = rgb("#c0381c"), rgb("#ffb347"), rgb("#fff6d8")
+    rows = [
+        " RRRR ",
+        "RYWWYR",
+        "RWWWYR",
+        "RYWYYR",
+        "RYYYRR",
+        " RRRR ",
+    ]
+    colors = {"R": rim, "Y": amber, "W": core}
+    img, d = canvas(6, 6)
+    for y, row in enumerate(rows):
+        for x, c in enumerate(row):
+            if c in colors:
+                d.point((x, y), fill=colors[c])
+    return img
+
+
 def main():
+    save(rifle_bullet(), "Sprites", "FX", "Bullet.png")
+    save(lion_run(), "Sprites", "Lion", "Lion.png")
     save(lion_collar(), "Sprites", "Lion", "LionCollar.png")
     save(collar_half(), "Sprites", "FX", "CollarHalf.png")
     save(shard(), "Sprites", "FX", "Shard.png")
