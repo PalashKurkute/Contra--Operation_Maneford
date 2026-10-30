@@ -1661,7 +1661,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
       cycleCount: 1
-      repeatInterval: 0.0001
+      repeatInterval: 0.01
       probability: 1
     - serializedVersion: 2
       time: 0.1
@@ -1719,7 +1719,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
       cycleCount: 1
-      repeatInterval: 0.0001
+      repeatInterval: 0.01
       probability: 1
     - serializedVersion: 2
       time: 0.3
@@ -1777,7 +1777,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
       cycleCount: 1
-      repeatInterval: 0.0001
+      repeatInterval: 0.01
       probability: 1
   SizeModule:
     enabled: 0
@@ -7372,7 +7372,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
       cycleCount: 1
-      repeatInterval: 0.0001
+      repeatInterval: 0.01
       probability: 1
     - serializedVersion: 2
       time: 0.18
@@ -7430,7 +7430,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
       cycleCount: 1
-      repeatInterval: 0.0001
+      repeatInterval: 0.01
       probability: 1
     - serializedVersion: 2
       time: 0.4
@@ -7488,7 +7488,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
       cycleCount: 1
-      repeatInterval: 0.0001
+      repeatInterval: 0.01
       probability: 1
   SizeModule:
     enabled: 1
@@ -24371,7 +24371,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -55
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 1731740487818298547, guid: fe39382e3e834ec4db80a4c673379ba7, type: 3}
+  m_Sprite: {fileID: 1569463679, guid: fe39382e3e834ec4db80a4c673379ba7, type: 3}
   m_Color: {r: 0.06, g: 0.04, b: 0.09, a: 1}
   m_FlipX: 0
   m_FlipY: 0

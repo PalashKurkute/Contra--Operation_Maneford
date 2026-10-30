@@ -6287,7 +6287,7 @@ AnimationClip:
     - time: 41.8
       value: {fileID: 1731740487818298547, guid: fe39382e3e834ec4db80a4c673379ba7, type: 3}
     - time: 42.4
-      value: {fileID: -1224384326437599908, guid: fe39382e3e834ec4db80a4c673379ba7, type: 3}
+      value: {fileID: -1368138568, guid: fe39382e3e834ec4db80a4c673379ba7, type: 3}
     attribute: m_Sprite
     path: C_Ridge/Lion C
     classID: 212
@@ -7117,7 +7117,7 @@ AnimationClip:
     - {fileID: 1731740487818298547, guid: fe39382e3e834ec4db80a4c673379ba7, type: 3}
     - {fileID: -1341699111379921251, guid: fe39382e3e834ec4db80a4c673379ba7, type: 3}
     - {fileID: 1731740487818298547, guid: fe39382e3e834ec4db80a4c673379ba7, type: 3}
-    - {fileID: -1224384326437599908, guid: fe39382e3e834ec4db80a4c673379ba7, type: 3}
+    - {fileID: -1368138568, guid: fe39382e3e834ec4db80a4c673379ba7, type: 3}
     - {fileID: 21300000, guid: cd87cd827900c3b4998b2651218c6345, type: 3}
     - {fileID: 21300000, guid: 7d6ed8a55776d6a479921d6551d01d14, type: 3}
     - {fileID: 21300000, guid: cd87cd827900c3b4998b2651218c6345, type: 3}

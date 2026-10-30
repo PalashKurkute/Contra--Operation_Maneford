@@ -93,6 +93,22 @@ LION_POSES = [
 ]
 
 
+# Lying down, head up (Lion_4): the cutscenes' resting lions. Low and
+# long with the paws out front, so it still reads as a silhouette
+LION_LYING = dict(body=(23, 28, 50, 35), mane=(21, 23), mane_scale=0.75, head=(13, 22),
+                  tail=[(49, 33), (52, 35), (54, 32)],
+                  far=[[(26, 32), (16, 34), (8, 34)], [(40, 31), (37, 34), (33, 35)]],
+                  near=[[(25, 33), (14, 35), (5, 35)], [(44, 30), (48, 34), (41, 35)]])
+
+
+# Standing tall, head up (Lion_5): the lion on the rock in the title
+# shot and Sultan in the ending
+LION_STANDING = dict(body=(23, 18, 46, 28), mane=(20, 15), head=(11, 13),
+                     tail=[(45, 21), (50, 23), (52, 17)],
+                     far=[[(30, 25), (31, 30), (31, 36)], [(38, 25), (36, 30), (37, 36)]],
+                     near=[[(25, 25), (23, 30), (22, 36)], [(43, 24), (45, 30), (44, 36)]])
+
+
 def _lion_leg(d, leg, fill, front):
     (jx, jy), (kx, ky), (px, py) = leg
     d.line([(jx, jy), (kx, ky)], fill=fill, width=4)
@@ -116,13 +132,13 @@ def _lion_shade(img, base, light, dark):
     return Image.fromarray(px, "RGBA")
 
 
-def _lion_mane(d, cx, cy):
+def _lion_mane(d, cx, cy, scale=1.0):
     # A shaggy disc: the radius wobbles in tufts
     tufts = [9, 8, 10, 8, 9, 10, 8, 9, 8, 10, 9, 8]
     points = []
     for i in range(48):
         a = i / 48 * 2 * math.pi
-        r = tufts[(i // 4) % len(tufts)] - (0.8 if i % 4 in (0, 3) else 0)
+        r = scale * (tufts[(i // 4) % len(tufts)] - (0.8 if i % 4 in (0, 3) else 0))
         # Flatter on top, longer down the chest
         ry = r * (0.85 if math.sin(a) < 0 else 1.05)
         points.append((cx + r * math.cos(a), cy + ry * math.sin(a)))
@@ -180,7 +196,7 @@ def lion_frame(pose):
     # Mane, then the face over it
     front, d = canvas(w, h)
     mx, my = pose["mane"]
-    _lion_mane(d, mx, my)
+    _lion_mane(d, mx, my, pose.get("mane_scale", 1.0))
     front = _lion_mane_texture(front, mx, my)
     d = ImageDraw.Draw(front)
     _lion_head(d, *pose["head"])
@@ -192,9 +208,11 @@ def lion_frame(pose):
 
 
 def lion_run():
-    """Four 56x40 gallop frames side by side (Lion_0..Lion_3)."""
-    sheet = Image.new("RGBA", (56 * 4, 40), (0, 0, 0, 0))
-    for i, pose in enumerate(LION_POSES):
+    """56x40 frames side by side: the gallop (Lion_0..Lion_3), lying
+    down (Lion_4) and standing tall (Lion_5)."""
+    poses = LION_POSES + [LION_LYING, LION_STANDING]
+    sheet = Image.new("RGBA", (56 * len(poses), 40), (0, 0, 0, 0))
+    for i, pose in enumerate(poses):
         sheet.alpha_composite(lion_frame(pose), (56 * i, 0))
     return sheet
 

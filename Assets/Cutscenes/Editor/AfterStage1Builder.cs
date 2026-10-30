@@ -81,6 +81,7 @@ public static class AfterStage1Builder
         return LoadSprite(Folder + "Art/" + name + ".png");
     }
 
+    // Lion_0..3 are the gallop, Lion_4 lies down, Lion_5 stands tall
     static Sprite LionFrame(int i)
     {
         return LoadSprite("Assets/Sprites/Lion/Lion.png", "Lion_" + i);
@@ -228,7 +229,7 @@ public static class AfterStage1Builder
         // Rook, and the last lion of the pack, down, its collar sparking
         AddCharacter("Rook", a, RookIdle[0], new Vector2(-4.2f, GroundA + 19f / 16f), 10, Twilight);
 
-        SpriteRenderer lion = AddCharacter("Lion", a, LionFrame(0), LionAt, 10, Twilight);
+        SpriteRenderer lion = AddCharacter("Lion", a, LionFrame(4), LionAt, 10, Twilight);
 
         // The collar rides on the lion (undoing its 6.25x scale) so
         // it twitches with it
@@ -507,7 +508,7 @@ public static class AfterStage1Builder
         // Down and twitching; the break; the head shake; up, away,
         // a look back at Rook; then gone into the trees
         clip.Sprites(lion, new SpriteKeys()
-            .Set(0f, LionFrame(0))
+            .Set(0f, LionFrame(4))
             .Set(Rise, LionFrame(1))
             .Cycle(Walk, Stop, 0.22f, LionFrame(1), LionFrame(2))
             .Set(Stop, LionFrame(1))

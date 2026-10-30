@@ -101,6 +101,7 @@ public static class EndingBuilder
     static Sprite[] RookIdle => Frames(Hero, "Hero_idle_", 5);
     static Sprite[] RookRun => Frames(Hero, "Hero_run_", 6);
     static Sprite RookLowered => LoadSprite(Hero, "Hero_run_down_3");
+    // Lion_0..3 are the gallop, Lion_4 lies down, Lion_5 stands tall
     static Sprite LionFrame(int i) => LoadSprite("Assets/Sprites/Lion/Lion.png", "Lion_" + i);
 
     static Sprite[] Heli => new[] { LoadSprite("Assets/HelicopterStage/Art/GeneralHeli_0.png"),
@@ -342,7 +343,7 @@ public static class EndingBuilder
 
         // Far off: a rock, and on it a great lion
         Transform rock = AddParallax("Far Rock", c, ArtSprite("far_rock"), new Vector2(205.6f, -1.2f), 0.55f, AnchorC, -76);
-        SpriteRenderer sultan = AddCharacter("Sultan", rock.GetChild(0), LionFrame(1), new Vector2(-0.15f, 1.35f),
+        SpriteRenderer sultan = AddCharacter("Sultan", rock.GetChild(0), LionFrame(5), new Vector2(-0.15f, 1.35f),
             -75, new Color(0.23f, 0.13f, 0.18f), layer: "Background");
         sultan.transform.localScale = Vector3.one * CharacterScale * 0.42f;
 
@@ -353,8 +354,8 @@ public static class EndingBuilder
         AddSprite("Ridge", c, ArtSprite("ridge"), new Vector2(200f, RidgeY - 0.85f), 5);
         AddSprite("Rook", c, ArtSprite("rook_sit_0"), SitAt, 7);
 
-        AddCharacter("Lion A", c, LionFrame(0), new Vector2(195.4f, LionLieY), 6, Shade, flipX: true);
-        AddCharacter("Lion B", c, LionFrame(0), new Vector2(203.6f, LionLieY + 0.1f), 6, Shade);
+        AddCharacter("Lion A", c, LionFrame(4), new Vector2(195.4f, LionLieY), 6, Shade, flipX: true);
+        AddCharacter("Lion B", c, LionFrame(4), new Vector2(203.6f, LionLieY + 0.1f), 6, Shade);
         AddCharacter("Lion C", c, LionFrame(1), new Vector2(206.5f, LionLieY + 0.15f), 8, Shade);
 
         fireflies.SetParent(c, false);
@@ -570,7 +571,7 @@ public static class EndingBuilder
             .Set(0f, LionFrame(1))
             .Cycle(LionIn, LionDown - 0.6f, 0.25f, LionFrame(1), LionFrame(2))
             .Set(LionDown - 0.6f, LionFrame(1))
-            .Set(LionDown, LionFrame(0)));
+            .Set(LionDown, LionFrame(4)));
         clip.Move(c + "Lion C",
             new Curve(0f, 206.5f, Ease.Hold).To(LionIn, 206.5f, Ease.Linear).To(LionDown - 0.6f, 201.2f, Ease.Hold),
             Bob(new Curve(0f, LionLieY + 0.15f, Ease.Hold).To(LionDown, LionLieY + 0.15f).To(LionDown + 0.3f, LionLieY),
