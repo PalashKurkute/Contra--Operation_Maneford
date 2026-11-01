@@ -67,3 +67,10 @@ __pycache__/
 # Raw portrait downloads (big); Tools/import_portraits.py turns them into Assets/Dialogue/Portraits
 Art/PortraitsRaw/*
 !Art/PortraitsRaw/.gitkeep
+
+# Unity's crash-recovery copies of unsaved scenes
+/[Aa]ssets/_Recovery/
+/[Aa]ssets/_Recovery.meta
+
+# Local Claude Code / MCP connection settings
+.mcp.json

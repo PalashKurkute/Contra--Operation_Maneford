@@ -1,0 +1,16 @@
+# Keep every file byte-for-byte as committed, so Unity's LF-saved YAML doesn't
+# show up as changed on Windows machines with core.autocrlf on.
+* -text
+
+# Unity assets: never try to text-merge these
+*.png binary
+*.jpg binary
+*.psd binary
+*.pdf binary
+*.mp4 binary
+*.wav binary
+*.mp3 binary
+*.ogg binary
+*.ttf binary
+*.otf binary
+*.aseprite binary
