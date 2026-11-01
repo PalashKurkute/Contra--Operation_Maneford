@@ -16,7 +16,7 @@ Then:
 
 1. Clone the repo:
    ```
-   git clone git@github.com:PalashKurkute/DevJournal-.git
+   git clone git@github.com:PalashKurkute/Contra--Operation_Maneford.git
    ```
 2. In Unity Hub, choose **Add > Add project from disk** and select the cloned folder (the one containing `Assets` and `ProjectSettings`).
 3. Open it. The first import rebuilds the `Library` folder and downloads packages, so it takes several minutes.
